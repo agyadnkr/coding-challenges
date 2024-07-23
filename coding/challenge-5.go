@@ -1,6 +1,6 @@
 package coding
 
-func InterpretArithmaticCommand(commands []string) (output int) {
+func InterpretArithmeticCommand(commands []string) (output float64) {
 	// Code start here
 	return
 }
