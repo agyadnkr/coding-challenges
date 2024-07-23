@@ -12,4 +12,4 @@ output: 35
 
 Note: 
 1. Operations are executed sequentially without considering mathematical precedence,
-2. The command should be case-sensitive, meaning "add" or "suBStraCt" will be counted as 0. 
+2. The command should be case-sensitive, meaning "add" or "suBStraCt" will be skipped. 

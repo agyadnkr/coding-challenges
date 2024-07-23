@@ -1,4 +1,4 @@
-package coding_challenge
+package main
 
 func main() {
 }
