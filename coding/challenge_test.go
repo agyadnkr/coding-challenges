@@ -290,7 +290,7 @@ func TestFindRepeatedNumber(t *testing.T) {
 		}
 	}
 
-	t.Logf("FOURTH CASE: Large Array (n: %d arr: 1 - 1 million)\n", n)
+	t.Logf("FIFTH CASE: Large Array (n: %d arr: 1 - 1 million)\n", n)
 
 	result = FindRepeatedNumber(arr, n)
 
