@@ -138,10 +138,10 @@ func TestFindVowelPosition(t *testing.T) {
 	)
 
 	// First Case
-	t.Log("FIRST CASE: Simple String with 1 Vowel")
-
 	text = "a"
 	expectedResult = []int{1}
+
+	t.Logf("FIRST CASE: Simple String with 1 Vowel (%s)\n", text)
 
 	result = FindVowelPosition(text)
 
@@ -151,10 +151,10 @@ func TestFindVowelPosition(t *testing.T) {
 	// End First Case
 
 	// Second Case
-	t.Log("SECOND CASE: Simple String with no Vowel")
-
 	text = "bswfkplhv"
 	expectedResult = []int{}
+
+	t.Logf("SECOND CASE: Simple String with no Vowel (%s)\n", text)
 
 	result = FindVowelPosition(text)
 
@@ -164,10 +164,10 @@ func TestFindVowelPosition(t *testing.T) {
 	// End Second Case
 
 	// Third Case
-	t.Log("THIRD CASE: Vowels with Whitespace")
-
 	text = "Hello World!"
 	expectedResult = []int{2, 5, 8}
+
+	t.Logf("THIRD CASE: Vowels with Whitespace (%s)\n", text)
 
 	result = FindVowelPosition(text)
 
@@ -177,10 +177,10 @@ func TestFindVowelPosition(t *testing.T) {
 	// End Third Case
 
 	// Fourth Case
-	t.Log("FOURTH CASE: Mixed Case Vowels")
-
 	text = "HEllo WOrLd!"
 	expectedResult = []int{2, 5, 8}
+
+	t.Logf("FOURTH CASE: Mixed Case Vowels (%s)\n", text)
 
 	result = FindVowelPosition(text)
 
@@ -190,10 +190,10 @@ func TestFindVowelPosition(t *testing.T) {
 	// End Fourth Case
 
 	// Fifth Case
-	t.Log("FIFTH CASE: Text with Numbers and Symbols")
-
 	text = "Th3r3 @r3 v0w3ls h3r3!"
 	expectedResult = []int{}
+
+	t.Logf("FIFTH CASE: Text with Numbers and Symbols (%s)\n", text)
 
 	result = FindVowelPosition(text)
 
@@ -203,10 +203,9 @@ func TestFindVowelPosition(t *testing.T) {
 	// End Fifth Case
 
 	// Sixth Case
-	t.Log("SIXTH CASE: Long Text")
-
 	text = "This is a very long string with multiple vowels spread throughout the text."
 	expectedResult = []int{3, 6, 9, 12, 17, 24, 29, 34, 37, 40, 43, 45, 52, 53, 59, 60, 63, 64, 69, 72}
+	t.Logf("SIXTH CASE: Long Text (%s)\n", text)
 
 	result = FindVowelPosition(text)
 
@@ -214,4 +213,89 @@ func TestFindVowelPosition(t *testing.T) {
 		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
 	}
 	// End Sixth Case
+}
+
+func TestFindRepeatedNumber(t *testing.T) {
+	var (
+		arr            []int
+		n              int
+		result         []int
+		expectedResult []int
+	)
+
+	// First Case
+	arr = []int{1, 2, 3, 4, 5, 6, 7, 8}
+	n = 1
+	expectedResult = []int{1, 2, 3, 4, 5, 6, 7, 8}
+
+	t.Logf("FIRST CASE: Single Occurence (n: %d arr: %v)\n", n, arr)
+
+	result = FindRepeatedNumber(arr, n)
+
+	if !reflect.DeepEqual(result, expectedResult) {
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
+	}
+	// End First Case
+
+	// Second Case
+	arr = []int{1, 2, 3, 4, 5, 6, 7, 8}
+	n = 2
+	expectedResult = []int{}
+
+	t.Logf("SECOND CASE: No Occurence (n: %d arr: %v)\n", n, arr)
+
+	result = FindRepeatedNumber(arr, n)
+
+	if len(result) > 0 {
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
+	}
+	// End Second Case
+
+	// Third Case
+	arr = []int{1, 2, 3, 4, 2, 3, 4, 5, 6, 4, 3, 2}
+	n = 3
+	expectedResult = []int{2, 3, 4}
+
+	t.Logf("THIRD CASE: Multiple Matching Occurences (n: %d arr: %v)\n", n, arr)
+
+	result = FindRepeatedNumber(arr, n)
+
+	if !reflect.DeepEqual(result, expectedResult) {
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
+	}
+	// End Third Case
+
+	// Fourth Case
+	arr = []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1}
+	n = 1
+	expectedResult = []int{15}
+
+	t.Logf("FOURTH CASE: Exact Occurences (n: %d arr: %v)\n", n, arr)
+
+	result = FindRepeatedNumber(arr, n)
+
+	if !reflect.DeepEqual(result, expectedResult) {
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
+	}
+	// End Fourth Case
+
+	// Fifth Case
+	arr = []int{}
+	n = 7
+	expectedResult = []int{}
+
+	for i := 1; i <= 1000000; i++ {
+		for j := 0; j < 5; j++ {
+			arr = append(arr, i)
+		}
+	}
+
+	t.Logf("FIFTH CASE: Large Array (n: %d arr: 1 - 1 million)\n", n)
+
+	result = FindRepeatedNumber(arr, n)
+
+	if len(result) > 0 {
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
+	}
+	// End Fifth Case
 }
