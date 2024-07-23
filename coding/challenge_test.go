@@ -214,3 +214,88 @@ func TestFindVowelPosition(t *testing.T) {
 	}
 	// End Sixth Case
 }
+
+func TestFindRepeatedNumber(t *testing.T) {
+	var (
+		arr            []int
+		n              int
+		result         []int
+		expectedResult []int
+	)
+
+	// First Case
+	arr = []int{1, 2, 3, 4, 5, 6, 7, 8}
+	n = 1
+	expectedResult = []int{1, 2, 3, 4, 5, 6, 7, 8}
+
+	t.Logf("FIRST CASE: Single Occurence (n: %d arr: %v)\n", n, arr)
+
+	result = FindRepeatedNumber(arr, n)
+
+	if !reflect.DeepEqual(result, expectedResult) {
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
+	}
+	// End First Case
+
+	// Second Case
+	arr = []int{1, 2, 3, 4, 5, 6, 7, 8}
+	n = 2
+	expectedResult = []int{}
+
+	t.Logf("SECOND CASE: No Occurence (n: %d arr: %v)\n", n, arr)
+
+	result = FindRepeatedNumber(arr, n)
+
+	if len(result) > 0 {
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
+	}
+	// End Second Case
+
+	// Third Case
+	arr = []int{1, 2, 3, 4, 2, 3, 4, 5, 6, 4, 3, 2}
+	n = 3
+	expectedResult = []int{2, 3, 4}
+
+	t.Logf("THIRD CASE: Multiple Matching Occurences (n: %d arr: %v)\n", n, arr)
+
+	result = FindRepeatedNumber(arr, n)
+
+	if !reflect.DeepEqual(result, expectedResult) {
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
+	}
+	// End Third Case
+
+	// Fourth Case
+	arr = []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1}
+	n = 1
+	expectedResult = []int{15}
+
+	t.Logf("FOURTH CASE: Exact Occurences (n: %d arr: %v)\n", n, arr)
+
+	result = FindRepeatedNumber(arr, n)
+
+	if !reflect.DeepEqual(result, expectedResult) {
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
+	}
+	// End Fourth Case
+
+	// Fifth Case
+	arr = []int{}
+	n = 7
+	expectedResult = []int{}
+
+	for i := 1; i <= 1000000; i++ {
+		for j := 0; j < 5; j++ {
+			arr = append(arr, i)
+		}
+	}
+
+	t.Logf("FOURTH CASE: Large Array (n: %d arr: 1 - 1 million)\n", n)
+
+	result = FindRepeatedNumber(arr, n)
+
+	if len(result) > 0 {
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
+	}
+	// End Fifth Case
+}
