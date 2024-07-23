@@ -360,3 +360,128 @@ func TestTrimSpace(t *testing.T) {
 	// End Fourth Case
 
 }
+
+func TestInterpretArithmeticCommand(t *testing.T) {
+	var (
+		commands       []string
+		result         float64
+		expectedResult float64
+	)
+
+	// First Case
+	commands = []string{}
+	expectedResult = 0
+
+	t.Logf("FIRST CASE: Empty Command (%v)\n", commands)
+
+	result = InterpretArithmeticCommand(commands)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%.2f\", want: \"%.2f\".", result, expectedResult)
+	}
+	// End First Case
+
+	// Second Case
+	commands = []string{"Add 5"}
+	expectedResult = 5
+
+	t.Logf("FIRST CASE: Single Command (%v)\n", commands)
+
+	result = InterpretArithmeticCommand(commands)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%.2f\", want: \"%.2f\".", result, expectedResult)
+	}
+	// End Second Case
+
+	// Third Case
+	commands = []string{"Add 1", "Add 1", "Add 1", "Add 1", "Multiply 2", "Divide 2"}
+	expectedResult = 4
+
+	t.Logf("THIRD CASE: Simple Multiple Arithmetic (%v)\n", commands)
+
+	result = InterpretArithmeticCommand(commands)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%.2f\", want: \"%.2f\".", result, expectedResult)
+	}
+	// End Third Case
+
+	// Fourth Case
+	commands = []string{"Add 10", "Subtract 5", "Subtract 5", "Divide 10"}
+	expectedResult = 0
+
+	t.Logf("FOURTH CASE: Zero Divided by Number (%v)\n", commands)
+
+	result = InterpretArithmeticCommand(commands)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%.2f\", want: \"%.2f\".", result, expectedResult)
+	}
+	// End Fourth Case
+
+	// Fifth Case
+	commands = []string{"Add 10", "Subtract 5", "Subtract 5", "Subtract 2", "Divide 0"}
+	expectedResult = -2
+
+	t.Logf("FIFTH CASE: Division by Zero (%v)\n", commands)
+
+	result = InterpretArithmeticCommand(commands)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%.2f\", want: \"%.2f\".", result, expectedResult)
+	}
+	// End Fifth Case
+
+	// Sixth Case
+	commands = []string{"add 10", "Subtract 5", "subtract 5", "Subtract 2", "add 10", "Add 20", "Multiply 8"}
+	expectedResult = 104
+
+	t.Logf("SIXTH CASE: Case-Sensitive Commands (%v)\n", commands)
+
+	result = InterpretArithmeticCommand(commands)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%.2f\", want: \"%.2f\".", result, expectedResult)
+	}
+	// End Sixth Case
+
+	// Seventh Case
+	commands = []string{"Add 1", "Add 9", "Divide 2", "Multiply 10", "Divide two"}
+	expectedResult = 50
+
+	t.Logf("SEVENTH CASE: Command with Invalid Number (%v)\n", commands)
+
+	result = InterpretArithmeticCommand(commands)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%.2f\", want: \"%.2f\".", result, expectedResult)
+	}
+	// End Seventh Case
+
+	// Eighth Case
+	commands = []string{"Add 10000", "Add 15000", "Divide 500", "Multiply 10000"}
+	expectedResult = 500000
+
+	t.Logf("EIGHTH CASE: Command with Large Number (%v)\n", commands)
+
+	result = InterpretArithmeticCommand(commands)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%.2f\", want: \"%.2f\".", result, expectedResult)
+	}
+	// End Eighth Case
+
+	// Ninth Case
+	commands = []string{"Add 15", "Divide 2"}
+	expectedResult = 7.5
+
+	t.Logf("NINTH CASE: Decimal Result (%v)\n", commands)
+
+	result = InterpretArithmeticCommand(commands)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%.2f\", want: \"%.2f\".", result, expectedResult)
+	}
+	// End Ninth Case
+}
