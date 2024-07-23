@@ -9,6 +9,7 @@ Rule of this challenge:
 4. ChatGPT or any kind of AI helper is prohibited,
 5. Googling is allowed (but not using gemini AI),
 6. No built-in method are allowed except: strings.Split(), strings.Join(), and slice-append,
-7. All method of loop are allowed (for range or regular for loop).
+7. All method of loop are allowed (for range or regular for loop),
+8. No stackoverflow or medium.
 
 Estimated completion time is 4 hours.

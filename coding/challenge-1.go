@@ -2,5 +2,16 @@ package coding
 
 func FilterNameByValueThreshold(names []string, nameValues []int, threshold int) (output []string) {
 	// Code start here
-	return
+
+	var group []string
+
+	for i, values := range nameValues {
+		if values > threshold {
+			group = append(group, names[i])
+		}
+
+	}
+
+	return group
+
 }
