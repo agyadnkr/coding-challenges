@@ -6,10 +6,11 @@ Example 1:
 input: []
 output: 0
 
-Example 2: 
+Example 2:
 input: ["Add 5", "Add 10", "Multiply 3", "Subtract 10"]
 output: 35
 
-Note: 
+Note:
 1. Operations are executed sequentially without considering mathematical precedence,
-2. The command should be case-sensitive, meaning "add" or "suBStraCt" will be skipped. 
+2. The command should be case-sensitive, meaning "add" or "suBStraCt" will be skipped,
+3. the number in the commands are always positive integer or zero.
