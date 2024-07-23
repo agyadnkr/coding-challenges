@@ -138,10 +138,10 @@ func TestFindVowelPosition(t *testing.T) {
 	)
 
 	// First Case
-	t.Log("FIRST CASE: Simple String with 1 Vowel")
-
 	text = "a"
 	expectedResult = []int{1}
+
+	t.Logf("FIRST CASE: Simple String with 1 Vowel (%s)\n", text)
 
 	result = FindVowelPosition(text)
 
@@ -151,10 +151,10 @@ func TestFindVowelPosition(t *testing.T) {
 	// End First Case
 
 	// Second Case
-	t.Log("SECOND CASE: Simple String with no Vowel")
-
 	text = "bswfkplhv"
 	expectedResult = []int{}
+
+	t.Logf("SECOND CASE: Simple String with no Vowel (%s)\n", text)
 
 	result = FindVowelPosition(text)
 
@@ -164,10 +164,10 @@ func TestFindVowelPosition(t *testing.T) {
 	// End Second Case
 
 	// Third Case
-	t.Log("THIRD CASE: Vowels with Whitespace")
-
 	text = "Hello World!"
 	expectedResult = []int{2, 5, 8}
+
+	t.Logf("THIRD CASE: Vowels with Whitespace (%s)\n", text)
 
 	result = FindVowelPosition(text)
 
@@ -177,10 +177,10 @@ func TestFindVowelPosition(t *testing.T) {
 	// End Third Case
 
 	// Fourth Case
-	t.Log("FOURTH CASE: Mixed Case Vowels")
-
 	text = "HEllo WOrLd!"
 	expectedResult = []int{2, 5, 8}
+
+	t.Logf("FOURTH CASE: Mixed Case Vowels (%s)\n", text)
 
 	result = FindVowelPosition(text)
 
@@ -190,10 +190,10 @@ func TestFindVowelPosition(t *testing.T) {
 	// End Fourth Case
 
 	// Fifth Case
-	t.Log("FIFTH CASE: Text with Numbers and Symbols")
-
 	text = "Th3r3 @r3 v0w3ls h3r3!"
 	expectedResult = []int{}
+
+	t.Logf("FIFTH CASE: Text with Numbers and Symbols (%s)\n", text)
 
 	result = FindVowelPosition(text)
 
@@ -203,10 +203,9 @@ func TestFindVowelPosition(t *testing.T) {
 	// End Fifth Case
 
 	// Sixth Case
-	t.Log("SIXTH CASE: Long Text")
-
 	text = "This is a very long string with multiple vowels spread throughout the text."
 	expectedResult = []int{3, 6, 9, 12, 17, 24, 29, 34, 37, 40, 43, 45, 52, 53, 59, 60, 63, 64, 69, 72}
+	t.Logf("SIXTH CASE: Long Text (%s)\n", text)
 
 	result = FindVowelPosition(text)
 
