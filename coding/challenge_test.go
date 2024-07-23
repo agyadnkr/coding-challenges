@@ -146,7 +146,7 @@ func TestFindVowelPosition(t *testing.T) {
 	result = FindVowelPosition(text)
 
 	if !reflect.DeepEqual(result, expectedResult) {
-		t.Errorf("INCCORECT RESULT: got: %+q, want: %+q.", result, expectedResult)
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
 	}
 	// End First Case
 
@@ -159,7 +159,7 @@ func TestFindVowelPosition(t *testing.T) {
 	result = FindVowelPosition(text)
 
 	if len(result) > 0 {
-		t.Errorf("INCCORECT RESULT: got: %+q, want: %+q.", result, expectedResult)
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
 	}
 	// End Second Case
 
@@ -172,7 +172,7 @@ func TestFindVowelPosition(t *testing.T) {
 	result = FindVowelPosition(text)
 
 	if !reflect.DeepEqual(result, expectedResult) {
-		t.Errorf("INCCORECT RESULT: got: %+q, want: %+q.", result, expectedResult)
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
 	}
 	// End Third Case
 
@@ -185,7 +185,7 @@ func TestFindVowelPosition(t *testing.T) {
 	result = FindVowelPosition(text)
 
 	if !reflect.DeepEqual(result, expectedResult) {
-		t.Errorf("INCCORECT RESULT: got: %+q, want: %+q.", result, expectedResult)
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
 	}
 	// End Fourth Case
 
@@ -198,7 +198,7 @@ func TestFindVowelPosition(t *testing.T) {
 	result = FindVowelPosition(text)
 
 	if len(result) > 0 {
-		t.Errorf("INCCORECT RESULT: got: %+q, want: %+q.", result, expectedResult)
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
 	}
 	// End Fifth Case
 
@@ -211,7 +211,7 @@ func TestFindVowelPosition(t *testing.T) {
 	result = FindVowelPosition(text)
 
 	if !reflect.DeepEqual(result, expectedResult) {
-		t.Errorf("INCCORECT RESULT: got: %+q, want: %+q.", result, expectedResult)
+		t.Errorf("INCCORECT RESULT: got: %v, want: %v.", result, expectedResult)
 	}
 	// End Sixth Case
 }
