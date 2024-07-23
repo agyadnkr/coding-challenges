@@ -485,3 +485,124 @@ func TestInterpretArithmeticCommand(t *testing.T) {
 	}
 	// End Ninth Case
 }
+
+func TestFindMaxSum(t *testing.T) {
+	var (
+		matrix         [][]int
+		result         int
+		expectedResult int
+	)
+
+	// First Case
+	matrix = [][]int{
+		{1, 1, 1, 1, 1},
+		{1, 1, 2, 1, 1},
+		{1, 1, 3, 1, 1},
+		{1, 1, 4, 1, 1},
+		{1, 1, 5, 1, 1},
+	}
+	expectedResult = 15
+
+	t.Log("FIRST CASE: Simple Matrix with Vertical Max Sum")
+	for _, row := range matrix {
+		t.Log(row)
+	}
+
+	result = FindMaxSum(matrix)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%d\", want: \"%d\".", result, expectedResult)
+	}
+	// End First Case
+
+	// Second Case
+	matrix = [][]int{
+		{1, 1, 1, 1, 1},
+		{1, 1, 1, 1, 1},
+		{1, 2, 3, 4, 5},
+		{1, 1, 1, 1, 1},
+		{1, 1, 1, 1, 1},
+	}
+	expectedResult = 15
+
+	t.Log("SECOND CASE: Simple Matrix with Horizontal Max Sum")
+	for _, row := range matrix {
+		t.Log(row)
+	}
+
+	result = FindMaxSum(matrix)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%d\", want: \"%d\".", result, expectedResult)
+	}
+	// End Second Case
+
+	// Third Case
+	matrix = [][]int{
+		{1, 2, 3, 4, 5, 6},
+		{7, 8, 9, 10, 11, 12},
+		{13, 14, 15, 16, 17, 18},
+		{19, 20, 21, 22, 23, 24},
+		{25, 26, 27, 28, 29, 30},
+		{31, 32, 33, 34, 35, 36},
+	}
+	expectedResult = 170
+
+	t.Log("THIRD CASE: Larger Matrix with Mixed Values")
+	for _, row := range matrix {
+		t.Log(row)
+	}
+
+	result = FindMaxSum(matrix)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%d\", want: \"%d\".", result, expectedResult)
+	}
+	// End Third Case
+
+	// Fourth Case
+	matrix = [][]int{
+		{-1, -2, -3, -4, -5},
+		{-6, -7, -8, -9, -10},
+		{-11, -12, -13, -14, -15},
+		{-16, -17, -18, -19, -20},
+		{-21, -22, -23, -24, -25},
+	}
+	expectedResult = -15
+
+	t.Log("FOURTH CASE: Matrix with Negative Values")
+	for _, row := range matrix {
+		t.Log(row)
+	}
+
+	result = FindMaxSum(matrix)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%d\", want: \"%d\".", result, expectedResult)
+	}
+	// End Fourth Case
+
+	// Fifth Case
+	matrix = [][]int{
+		{1, -2, 3, -4, 5, -6, 7},
+		{-8, 9, -10, 11, -12, 13, -14},
+		{-17, 20, -23, 26, -29, 32, -35},
+		{-26, 31, -36, 41, -46, 51, -56},
+		{-35, 42, -49, 56, -63, -70, -77},
+		{-44, 53, -62, 71, -80, 89, -98},
+		{-53, 64, -75, 86, -97, 109, -119},
+	}
+	expectedResult = 280
+
+	t.Log("FIFTH CASE: Matrix with Mixed Negative and Positive Values")
+	for _, row := range matrix {
+		t.Log(row)
+	}
+
+	result = FindMaxSum(matrix)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%d\", want: \"%d\".", result, expectedResult)
+	}
+	// End Fifth Case
+}
