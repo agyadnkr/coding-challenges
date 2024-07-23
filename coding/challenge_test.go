@@ -299,3 +299,64 @@ func TestFindRepeatedNumber(t *testing.T) {
 	}
 	// End Fifth Case
 }
+
+func TestTrimSpace(t *testing.T) {
+	var (
+		text           string
+		result         string
+		expectedResult string
+	)
+
+	// First Case
+	text = "Hello World!"
+	expectedResult = "Hello World!"
+
+	t.Logf("FIRST CASE: Simple Text with No Double Spaces (%s)\n", text)
+
+	result = TrimSpaces(text)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%s\", want: \"%s\".", result, expectedResult)
+	}
+	// End First Case
+
+	// Second Case
+	text = " Hello World! "
+	expectedResult = "Hello World!"
+
+	t.Logf("SECOND CASE: Text with Leading and Trailing Spaces (%s)\n", text)
+
+	result = TrimSpaces(text)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%s\", want: \"%s\".", result, expectedResult)
+	}
+	// End Second Case
+
+	// Third Case
+	text = "       Hello        World!          "
+	expectedResult = "Hello World!"
+
+	t.Logf("THIRD CASE: Text with Multiple Whitespaces (%s)\n", text)
+
+	result = TrimSpaces(text)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%s\", want: \"%s\".", result, expectedResult)
+	}
+	// End Third Case
+
+	// Fourth Case
+	text = "       Lorem ipsum dolor sit  amet,  consectetur  adipiscing elit. Proin facilisis ullamcorper     viverra. Maecenas vel venenatis dolor, sed vulputate mi. Donec vel        semper velit. Nam     mauris metus,     condimentum dapibus metus ut,     ornare    porttitor    enim.          "
+	expectedResult = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin facilisis ullamcorper viverra. Maecenas vel venenatis dolor, sed vulputate mi. Donec vel semper velit. Nam mauris metus, condimentum dapibus metus ut, ornare porttitor enim."
+
+	t.Logf("FOURTH CASE: Long Text with Multiple Whitespaces (%s)\n", text)
+
+	result = TrimSpaces(text)
+
+	if expectedResult != result {
+		t.Errorf("INCCORECT RESULT: got: \"%s\", want: \"%s\".", result, expectedResult)
+	}
+	// End Fourth Case
+
+}
