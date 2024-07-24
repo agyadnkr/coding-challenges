@@ -1,7 +1,6 @@
 package coding
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -38,7 +37,6 @@ func InterpretArithmeticCommand(commands []string) (output float64) {
 				output /= num
 			}
 		}
-		fmt.Println(output)
 	}
 
 	return output
