@@ -2,7 +2,7 @@
 
 # Find Maximum Sum of 5 Consecutive Numbers in A Matrix
 
-Write a function that take two-dimesnional array (matrix) of integers as input. The dimension of the matrix will be n x n, where n >= 5. Find the largest sum of any 5 consecutive numbers in the matrix. These 5 consecutive numbers can be aligned vertically or horizontallym but not diagonally. Return the largest sum.
+Write a function that take two-dimensional array (matrix) of integers as input. The dimension of the matrix will be n x n, where n >= 5. Find the largest sum of any 5 consecutive numbers in the matrix. These 5 consecutive numbers can be aligned vertically or horizontally but not diagonally. Return the largest sum.
 
 Example 1:
 input:
