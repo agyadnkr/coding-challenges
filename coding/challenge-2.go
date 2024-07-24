@@ -5,7 +5,7 @@ func FindVowelPosition(text string) (output []int) {
 
 	// huruf vokal a, i, u, e, o
 
-	var vowel = []string{"a", "i", "u", "e", "o"}
+	var vowel = []string{"a", "i", "u", "e", "o", "A", "I", "U", "E", "O"}
 
 	var hasilArray []int
 
