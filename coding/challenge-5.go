@@ -1,12 +1,15 @@
 package coding
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
 
 func InterpretArithmeticCommand(commands []string) (output float64) {
 	// Code start here
+
+	output = 0
 
 	for _, command := range commands {
 		part := strings.Split(command, " ")
@@ -15,28 +18,27 @@ func InterpretArithmeticCommand(commands []string) (output float64) {
 		}
 
 		op := part[0]
-		num, err := strconv.Atoi(part[1])
+		num, err := strconv.ParseFloat(part[1], 64)
 		if err != nil {
 			continue
 		}
 
-		newNum := float64(num)
-
 		switch op {
-		case "add":
-			output += newNum
+		case "Add":
+			output += num
 
-		case "multiply":
-			output *= newNum
+		case "Multiply":
+			output *= num
 
-		case "substract":
-			output -= newNum
+		case "Subtract":
+			output -= num
 
-		case "devide":
-			if newNum != 0 {
-				output /= newNum
+		case "Divide":
+			if num != 0 {
+				output /= num
 			}
 		}
+		fmt.Println(output)
 	}
 
 	return output
