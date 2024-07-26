@@ -10,7 +10,7 @@ input:
 params1 = [1, 2, 3, 4, 5, 6, 3, 2, 2, 5, 6]
 params2 = 3
 
-output = [2, 8, 9]
+output = [2]
 
 Example 2:
 input:
