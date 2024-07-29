@@ -26,7 +26,7 @@ func Signup(c echo.Context) error {
 
 	user.Password = string(hashedPass)
 
-	if err := middleware.CreateUser(user); err != nil {
+	if err := model.CreateUser(user); err != nil {
 		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_create_user")
 	}
 
@@ -49,7 +49,7 @@ func Login(c echo.Context) error {
 		return err
 	}
 
-	user, err := middleware.GetUserByEmail(userLogin.Email)
+	user, err := model.GetUserByEmail(userLogin.Email)
 	if err != nil {
 		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_get_user_email")
 	}

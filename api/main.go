@@ -1,7 +1,7 @@
 package main
 
 import (
-	"app/interactor"
+	"app/model"
 	"app/routes"
 
 	"github.com/labstack/echo/v4"
@@ -11,12 +11,12 @@ func main() {
 
 	e := echo.New()
 
-	data, err := interactor.InitDB()
+	data, err := model.InitDB()
 	if err != nil {
 		e.Logger.Fatal("Failed to connect to Database")
 	}
 
-	interactor.DB = data
+	model.DB = data
 
 	routes.User(e)
 

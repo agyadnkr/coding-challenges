@@ -1,12 +1,38 @@
 package middleware
 
 import (
+	"app/model"
+	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/golang-jwt/jwt"
 	"github.com/labstack/echo/v4"
+	"github.com/spf13/viper"
 )
+
+func NewEnv() *model.Env {
+	env := model.Env{}
+	viper.SetConfigFile("key.env")
+
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatal("Could not find Env file", err)
+	}
+
+	err = viper.Unmarshal(&env)
+	if err != nil {
+		log.Fatal("Enviroment cant be loaded", err)
+	}
+
+	if env.AppEnv == "development" {
+		log.Println("The app is running in development env")
+	}
+
+	return &env
+
+}
 
 func CheckToken(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -29,7 +55,7 @@ func CheckToken(next echo.HandlerFunc) echo.HandlerFunc {
 		tokenString = parts[1]
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			return JwtSKey, nil
+			return keyJwtSKey, nil
 		})
 
 		if err != nil {
@@ -59,4 +85,21 @@ func CheckToken(next echo.HandlerFunc) echo.HandlerFunc {
 
 		return next(c)
 	}
+}
+
+func GenerateJWT(user model.User, expiry time.Duration) (string, error) {
+
+	exp := time.Now().Add(time.Hour * time.Duration(expiry)).Unix()
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user_id": user.Uid,
+		"exp":     exp,
+	})
+
+	tokenString, err := token.SignedString(JwtSKey)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
 }

@@ -1,10 +1,14 @@
 package model
 
 import (
+	"errors"
 	"time"
 
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
+
+var DB *gorm.DB
 
 type User struct {
 	Uid        uint `gorm:"user_id" column:"user_id"`
@@ -43,4 +47,48 @@ type Inventory struct {
 	Itmid      uint `gorm:"item_id" column:"item_id"`
 	Wid        uint `gorm:"warehouse_id" column:"warehouse_id"`
 	Quantity   int  `gorm:"item_quantity" column:"item_quantity"`
+}
+
+type Env struct {
+	AppEnv            string `mapstructure:"APP_ENV"`
+	AccessTokenSecret string `mapstructure:"ACCESS_TOKEN_SECRET"`
+}
+
+func InitDB() (*gorm.DB, error) {
+
+	dsn := "host=localhost user=postgres password=postgres dbname=postgres port=5433 sslmode=disable"
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		return nil, err
+	}
+
+	return db, nil
+
+}
+
+func CreateUser(newAuthor User) error {
+
+	db := DB
+
+	var existingUser User
+	if err := db.Table("users").Where("user_name=?", newAuthor.UserName).First(&existingUser).Error; err == nil {
+		return errors.New("Author_with_the_same_name_is_already_exists")
+	}
+
+	if err := db.Create(&newAuthor).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetUserByEmail(email string) (*User, error) {
+
+	var user User
+	if err := DB.Table("users").Where("user_email = ?", email).First(&user).Error; err != nil {
+		return nil, err
+	}
+
+	return &user, nil
 }
