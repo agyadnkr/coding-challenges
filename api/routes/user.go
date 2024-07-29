@@ -1,6 +1,7 @@
 package routes
 
 import (
+	controllers "app/controllers"
 	"app/middleware"
 
 	"github.com/labstack/echo/v4"

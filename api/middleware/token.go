@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"app/interactor"
 	"net/http"
 	"strings"
 
@@ -30,7 +29,7 @@ func CheckToken(next echo.HandlerFunc) echo.HandlerFunc {
 		tokenString = parts[1]
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			return interactor.JwtSKey, nil
+			return JwtSKey, nil
 		})
 
 		if err != nil {

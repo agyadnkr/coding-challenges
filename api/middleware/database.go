@@ -1,4 +1,4 @@
-package interactor
+package middleware
 
 import (
 	"gorm.io/driver/postgres"
