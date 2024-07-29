@@ -1,4 +1,4 @@
-package coding
+package main
 
 func TrimSpaces(text string) (output string) {
 	// Code start here
