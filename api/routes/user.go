@@ -1,6 +1,10 @@
 package routes
 
-import "github.com/labstack/echo/v4"
+import (
+	"app/middleware"
+
+	"github.com/labstack/echo/v4"
+)
 
 func User(e *echo.Echo) {
 
