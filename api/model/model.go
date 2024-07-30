@@ -21,7 +21,7 @@ type User struct {
 }
 
 type Item struct {
-	Itmid           uint `gorm:"item_id" column:"item_id"`
+	Itmid           string `gorm:"item_id" column:"item_id"`
 	Created_at      time.Time
 	Updated_at      time.Time
 	Deleted_at      gorm.DeletedAt
@@ -42,7 +42,7 @@ type Warehouse struct {
 }
 
 type Inventory struct {
-	Invid      uint `gorm:"inventory_id" column:"inventory_id"`
+	Invid      string `gorm:"inventory_id" column:"inventory_id"`
 	Created_at time.Time
 	Updated_at time.Time
 	Deleted_at gorm.DeletedAt
@@ -59,7 +59,7 @@ type Env struct {
 
 func InitDB() (*gorm.DB, error) {
 
-	dsn := "host=localhost user=postgres password=postgres dbname=postgres port=5433 sslmode=disable"
+	dsn := "host=localhost user=postgres password=postgres dbname=challange port=5433 sslmode=disable"
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
