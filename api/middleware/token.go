@@ -29,7 +29,7 @@ func init() {
 
 func NewEnv() *model.Env {
 	env := model.Env{}
-	viper.SetConfigFile("key.env")
+	viper.SetConfigFile(".env")
 
 	err := viper.ReadInConfig()
 	if err != nil {

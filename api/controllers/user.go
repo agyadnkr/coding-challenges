@@ -49,7 +49,7 @@ func Login(c echo.Context) error {
 		return err
 	}
 
-	user, err := model.GetUserByEmail(userLogin.Email)
+	user, err := model.GetUserByPassword(userLogin.Password)
 	if err != nil {
 		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_get_user_email")
 	}
