@@ -1,4 +1,4 @@
-package helpers
+package utility
 
 import "github.com/labstack/echo/v4"
 

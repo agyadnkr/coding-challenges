@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"app/helpers"
 	"app/middleware"
 	"app/model"
+	helpers "app/utility"
 	"net/http"
 	"time"
 

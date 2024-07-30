@@ -11,13 +11,13 @@ import (
 var DB *gorm.DB
 
 type User struct {
-	Uid        uint `gorm:"user_id" column:"user_id"`
+	Uid        string `gorm:"user_id" column:"user_id"`
 	Created_at time.Time
 	Updated_at time.Time
 	Deleted_at gorm.DeletedAt
-	UserName   string `gorm:"user_name" column:"user_name"`
-	Email      string `gorm:"user_email" column:"user_email"`
-	Password   string `gorm:"user_password" column:"user_password"`
+	UserName   string `gorm:"username" column:"username"`
+	Email      string `gorm:"email" column:"email"`
+	Password   string `gorm:"password" column:"password"`
 }
 
 type Item struct {
@@ -25,18 +25,20 @@ type Item struct {
 	Created_at      time.Time
 	Updated_at      time.Time
 	Deleted_at      gorm.DeletedAt
-	ItemName        string `gorm:"item_name" column:"item_name"`
-	ItemPrice       int    `gorm:"item_price" column:"item_price"`
-	ItemDescription string `gorm:"item_description" column:"item_description"`
+	ItemName        string                 `gorm:"name" column:"name"`
+	ItemPrice       int                    `gorm:"price" column:"price"`
+	ItemDescription string                 `gorm:"description" column:"description"`
+	ItmFilters      map[string]interface{} `json:"filter"`
 }
 
 type Warehouse struct {
-	Wid              uint `gorm:"warehouse_id" column:"warehouse_id"`
+	Wid              string `gorm:"warehouse_id" column:"warehouse_id"`
 	Created_at       time.Time
 	Updated_at       time.Time
 	Deleted_at       gorm.DeletedAt
-	WarehouseName    string `gorm:"warehouse_name" column:"warehouse_name"`
-	WarehouseAddress string `gorm:"warehouse_address" column:"warehouse_address"`
+	WarehouseName    string                 `gorm:"name" column:"name"`
+	WarehouseAddress string                 `gorm:"address" column:"address"`
+	WhFilters        map[string]interface{} `json:"filter"`
 }
 
 type Inventory struct {
@@ -44,9 +46,10 @@ type Inventory struct {
 	Created_at time.Time
 	Updated_at time.Time
 	Deleted_at gorm.DeletedAt
-	Itmid      uint `gorm:"item_id" column:"item_id"`
-	Wid        uint `gorm:"warehouse_id" column:"warehouse_id"`
-	Quantity   int  `gorm:"item_quantity" column:"item_quantity"`
+	Itmid      uint                   `gorm:"item_id" column:"item_id"`
+	Wid        string                 `gorm:"warehouse_id" column:"warehouse_id"`
+	Quantity   int                    `gorm:"quantity" column:"quantity"`
+	InvFilters map[string]interface{} `json:"filter"`
 }
 
 type Env struct {
@@ -72,7 +75,7 @@ func CreateUser(newAuthor User) error {
 	db := DB
 
 	var existingUser User
-	if err := db.Table("users").Where("user_name=?", newAuthor.UserName).First(&existingUser).Error; err == nil {
+	if err := db.Table("users").Where("name=?", newAuthor.UserName).First(&existingUser).Error; err == nil {
 		return errors.New("Author_with_the_same_name_is_already_exists")
 	}
 
@@ -86,9 +89,27 @@ func CreateUser(newAuthor User) error {
 func GetUserByEmail(email string) (*User, error) {
 
 	var user User
-	if err := DB.Table("users").Where("user_email = ?", email).First(&user).Error; err != nil {
+	if err := DB.Table("users").Where("email=?", email).First(&user).Error; err != nil {
 		return nil, err
 	}
 
 	return &user, nil
+}
+
+func CreateItem(newItem Item) error {
+
+	db := DB
+
+	var existingItem Item
+
+	if err := db.Table("items").Where("name=?", newItem.ItemName).First(&existingItem).Error; err == nil {
+		return errors.New("Item_with_the_same_name_already_exists")
+	}
+
+	if err := db.Create(&newItem).Error; err != nil {
+		return err
+	}
+
+	return nil
+
 }

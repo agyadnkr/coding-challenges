@@ -9,12 +9,12 @@ import (
 
 func User(e *echo.Echo) {
 
-	e.POST("Signup", controllers.Signup)
+	e.POST("register", controllers.Signup)
 
-	e.POST("Login", controllers.Login)
+	e.POST("login", controllers.Login)
 
-	userGroup := e.Group("/User", middleware.CheckToken)
+	itemGroup := e.Group(e.POST("/items", middleware.CheckToken, controllers.CreateItem))
 
-	userGroup.POST("/Create", controllers.CreateUser)
+	itemGroup.POST("/:id", controllers.FecthAllItems)
 
 }
