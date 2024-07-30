@@ -13,8 +13,13 @@ func User(e *echo.Echo) {
 
 	e.POST("login", controllers.Login)
 
-	itemGroup := e.Group(e.POST("/items", middleware.CheckToken, controllers.CreateItem))
+	apiGroup := e.Group("/api", middleware.CheckToken)
 
-	itemGroup.POST("/:id", controllers.FecthAllItems)
+	apiGroup.POST("/items", controllers.CreateItem)
 
+	// apiGroup.GET("/:id", controllers.FecthAllItems)
+
+	// apiGroup.PATCH("/:id", controllers.UpdateItem)
+
+	// apiGroup.DELETE("/:id", controllers.DeleteItem)
 }

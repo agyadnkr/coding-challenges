@@ -16,5 +16,11 @@ func CreateItem(c echo.Context) error {
 		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_bind_items")
 	}
 
+	for _, user := range ReqData {
+		if err := model.CreateItem(user); err != nil {
+			return utility.ReturnLog(c, http.StatusInternalServerError, "item_with_the_same_name_already_exist")
+		}
+	}
+
 	return nil
 }
