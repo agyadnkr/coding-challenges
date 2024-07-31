@@ -17,9 +17,10 @@ func User(e *echo.Echo) {
 
 	apiGroup.POST("/items", controllers.CreateItem)
 
-	// apiGroup.GET("/:id", controllers.FecthAllItems)
+	apiGroup.GET("/items/:id", controllers.FecthAllItems)
 
-	// apiGroup.PATCH("/:id", controllers.UpdateItem)
+	apiGroup.PATCH("/items/:id", controllers.UpdateItem)
 
-	// apiGroup.DELETE("/:id", controllers.DeleteItem)
+	apiGroup.DELETE("/items/:id", controllers.DeleteItem)
+
 }

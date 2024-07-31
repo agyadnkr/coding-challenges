@@ -95,8 +95,8 @@ func CheckToken(next echo.HandlerFunc) echo.HandlerFunc {
 			})
 		}
 
-		c.Set("user_email", claims["user_email"])
-		c.Set("user_name", claims["user_name"])
+		c.Set("email", claims["email"])
+		c.Set("username", claims["username"])
 
 		return next(c)
 	}
@@ -107,8 +107,8 @@ func GenerateJWT(user model.User, expiry time.Duration) (string, error) {
 	exp := time.Now().Add(time.Hour * time.Duration(expiry)).Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id": user.Uid,
-		"exp":     exp,
+		"id":  user.Uid,
+		"exp": exp,
 	})
 
 	tokenString, err := token.SignedString(jwtSecret)

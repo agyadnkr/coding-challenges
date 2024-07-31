@@ -4,6 +4,7 @@ import (
 	"app/middleware"
 	"app/model"
 	helpers "app/utility"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -32,6 +33,7 @@ func Signup(c echo.Context) error {
 
 	token, err := middleware.GenerateJWT(user, 24)
 	if err != nil {
+		fmt.Println(err, "<<<<<")
 		return err
 	}
 

@@ -1,6 +1,8 @@
 package utility
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/labstack/echo/v4"
+)
 
 func ReturnLog(c echo.Context, typelog int, data any, logmessage ...string) error {
 
@@ -27,7 +29,7 @@ func ReturnLog(c echo.Context, typelog int, data any, logmessage ...string) erro
 	}
 
 	logs = map[string]any{
-		"status_sode": typelog,
+		"status_code": typelog,
 		"Message":     response,
 		"data":        data,
 	}
