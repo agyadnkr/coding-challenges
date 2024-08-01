@@ -51,3 +51,15 @@ func UpdateWarehouse(c echo.Context) error {
 		"message": "Warehouse updated successfully",
 	})
 }
+
+func DeleteWarehouse(c echo.Context) error {
+	warehouseID := c.Param("id")
+
+	if err := model.DeleteWarehouse(warehouseID); err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_deleting_warehouse")
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Warehouse deleted successfully",
+	})
+}

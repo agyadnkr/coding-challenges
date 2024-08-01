@@ -47,3 +47,11 @@ func UpdateWarehouse(warehouseID string, updatedWarehouse Warehouse) error {
 
 	return nil
 }
+
+func DeleteWarehouse(warehouseID string) error {
+	if err := DB.Where("id = ?", warehouseID).Delete(&Warehouse{}).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
