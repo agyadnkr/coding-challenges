@@ -34,3 +34,20 @@ func FetchAllWarehouses(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, warehouses)
 }
+
+func UpdateWarehouse(c echo.Context) error {
+	warehouseID := c.Param("id")
+
+	var updatedWarehouse model.Warehouse
+	if err := c.Bind(&updatedWarehouse); err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_bind_warehouse")
+	}
+
+	if err := model.UpdateWarehouse(warehouseID, updatedWarehouse); err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_updating_warehouse")
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Warehouse updated successfully",
+	})
+}

@@ -22,7 +22,7 @@ func User(e *echo.Echo) {
 
 	apiGroup.POST("/warehouses", controllers.CreateWarehouse)
 	apiGroup.GET("/warehouses", controllers.FetchAllWarehouses)
-	// apiGroup.PATCH("/warehouses/:id", controllers.UpdateWarehouse)
+	apiGroup.PATCH("/warehouses/:id", controllers.UpdateWarehouse)
 	// apiGroup.DELETE("/warehouses/:id", controllers.DeleteWarehouse)
 
 }

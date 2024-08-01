@@ -39,3 +39,11 @@ func GetAllWarehouses() ([]Warehouse, error) {
 
 	return warehouses, nil
 }
+
+func UpdateWarehouse(warehouseID string, updatedWarehouse Warehouse) error {
+	if err := DB.Model(&Warehouse{}).Where("id = ?", warehouseID).Updates(updatedWarehouse).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
