@@ -1,8 +1,8 @@
 package model
 
 import (
-	"app/model"
 	"errors"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -27,25 +27,27 @@ func CreateItem(newItem Item) error {
 
 }
 
-func FetchItem(request Filter) (interface{}, error) {
-
-	var item Item
+func FetchItem(request Filter) ([]Item, error) {
+	var items []Item
 	db := DB
 
-	queryBuilder := db.Table("items").Where("1=1")
+	queryBuilder := db.Table("items").Where("deleted_at IS NULL")
 
-	ItemsDetails := *model.Item
-
-	if request.Filter != "" {
-		filter := request.Filter
-		queryBuilder = queryBuilder.Order(filter)
-
-		return item, nil
+	if request.KeyWord != "" {
+		queryBuilder = queryBuilder.Where("name ILIKE ?", "%"+strings.TrimSpace(request.KeyWord)+"%")
 	}
 
-	if err := queryBuilder.Find(&item).Error; err != nil {
-		return err, nil
+	if request.PriceMin != 0 {
+		queryBuilder = queryBuilder.Where("price >= ?", request.PriceMin)
 	}
 
-	return item, nil
+	if request.PriceMax != 0 {
+		queryBuilder = queryBuilder.Where("price <= ?", request.PriceMax)
+	}
+
+	if err := queryBuilder.Find(&items).Error; err != nil {
+		return nil, err
+	}
+
+	return items, nil
 }
