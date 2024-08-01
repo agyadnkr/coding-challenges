@@ -24,12 +24,10 @@ func CreateUser(newAuthor User) error {
 	return nil
 }
 
-func GetUserByPassword(password string) (*User, error) {
-
+func GetUserByUsername(username string) (*User, error) {
 	var user User
-	if err := DB.Table("users").Where("password=?", password).First(&user).Error; err != nil {
+	if err := DB.Table("users").Where("username = ?", username).First(&user).Error; err != nil {
 		return nil, err
 	}
-
 	return &user, nil
 }

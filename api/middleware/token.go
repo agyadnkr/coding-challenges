@@ -16,15 +16,8 @@ var jwtSecret string
 
 func init() {
 	viper.SetConfigFile(".env")
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatal("Could not find .env file", err)
-	}
-
+	viper.ReadInConfig()
 	jwtSecret = viper.GetString("JWT_SECRET")
-	if jwtSecret == "" {
-		log.Fatal("JWT_SECRET is not set in .env file")
-	}
 }
 
 func NewEnv() *model.Env {
@@ -103,15 +96,14 @@ func CheckToken(next echo.HandlerFunc) echo.HandlerFunc {
 }
 
 func GenerateJWT(user model.User, expiry time.Duration) (string, error) {
-
 	exp := time.Now().Add(time.Hour * time.Duration(expiry)).Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"id":  user.Uid,
-		"exp": exp,
+		"user_id": user.Uid,
+		"exp":     exp,
 	})
 
-	tokenString, err := token.SignedString(jwtSecret)
+	tokenString, err := token.SignedString([]byte(jwtSecret))
 	if err != nil {
 		return "", err
 	}

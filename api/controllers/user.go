@@ -44,25 +44,24 @@ func Signup(c echo.Context) error {
 }
 
 func Login(c echo.Context) error {
-
 	var userLogin model.User
 
 	if err := c.Bind(&userLogin); err != nil {
-		return err
+		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_bind_user")
 	}
 
-	user, err := model.GetUserByPassword(userLogin.Password)
+	user, err := model.GetUserByUsername(userLogin.UserName)
 	if err != nil {
-		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_get_user_email")
+		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_get_user_by_username")
 	}
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(userLogin.Password)); err != nil {
-		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_compare")
+		return helpers.ReturnLog(c, http.StatusUnauthorized, "Error_compare_password")
 	}
 
 	token, err := middleware.GenerateJWT(*user, 24*time.Hour)
 	if err != nil {
-		return err
+		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_generate_token")
 	}
 
 	expTime := time.Now().Add(24 * time.Hour)
@@ -70,5 +69,4 @@ func Login(c echo.Context) error {
 		"Token":  token,
 		"Exp_at": expTime.Format(time.RFC3339),
 	})
-
 }
