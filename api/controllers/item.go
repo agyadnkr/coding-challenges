@@ -5,25 +5,28 @@ import (
 	"app/utility"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
 func CreateItem(c echo.Context) error {
+	var reqData []model.Item
 
-	var ReqData []model.Item
-
-	if err := c.Bind(&ReqData); err != nil {
+	if err := c.Bind(&reqData); err != nil {
 		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_bind_items")
 	}
 
-	for _, user := range ReqData {
-		if err := model.CreateItem(user); err != nil {
+	for _, item := range reqData {
+		item.Itmid = uuid.New().String()
+		if err := model.CreateItem(item); err != nil {
 			return utility.ReturnLog(c, http.StatusInternalServerError, "item_with_the_same_name_already_exist")
 		}
 	}
 
-	return nil
+	return c.JSON(http.StatusCreated, map[string]interface{}{
+		"message": "Items created successfully",
+	})
 }
 
 func FecthAllItems(c echo.Context) error {

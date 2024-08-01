@@ -3,9 +3,21 @@ package model
 import (
 	"errors"
 	"strings"
+	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
+
+type Item struct {
+	Itmid           string         `gorm:"column:id"`
+	CreatedAt       time.Time      `gorm:"column:created_at;autoCreateTime"`
+	UpdatedAt       time.Time      `gorm:"column:updated_at;autoUpdateTime"`
+	DeletedAt       gorm.DeletedAt `gorm:"column:deleted_at"`
+	ItemName        string         `gorm:"column:name" json:"name"`
+	ItemPrice       int            `gorm:"column:price" json:"price"`
+	ItemDescription string         `gorm:"column:description" json:"description"`
+}
 
 func CreateItem(newItem Item) error {
 

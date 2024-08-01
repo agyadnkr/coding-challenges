@@ -2,9 +2,26 @@ package model
 
 import (
 	"errors"
+	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
+
+type User struct {
+	Uid       string         `gorm:"column:id"`
+	CreatedAt time.Time      `gorm:"column:created_at;autoCreateTime"`
+	UpdatedAt time.Time      `gorm:"column:updated_at;autoUpdateTime"`
+	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at"`
+	UserName  string         `gorm:"column:username" json:"username"`
+	Email     string         `gorm:"column:email" json:"email"`
+	Password  string         `gorm:"column:password" json:"password"`
+}
+
+type Env struct {
+	AppEnv            string `mapstructure:"APP_ENV"`
+	AccessTokenSecret string `mapstructure:"ACCESS_TOKEN_SECRET"`
+}
 
 func CreateUser(newAuthor User) error {
 
