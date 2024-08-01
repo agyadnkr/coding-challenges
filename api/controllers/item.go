@@ -56,15 +56,21 @@ func UpdateItem(c echo.Context) error {
 		return utility.ReturnLog(c, http.StatusBadRequest, "Invalid_request_body")
 	}
 
-	db := model.DB
-	if err := db.Model(&model.Item{}).Where("id = ?", id).Updates(itemData).Error; err != nil {
-		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_updating_item")
+	if err := model.UpdateItem(id, itemData); err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_updating_warehouse")
 	}
 
 	return utility.ReturnLog(c, http.StatusOK, "Item_updated_successfully")
 }
 
 func DeleteItem(c echo.Context) error {
+	itemID := c.Param("id")
 
-	return nil
+	if err := model.DeleteItem(itemID); err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_deleting_warehouse")
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Warehouse deleted successfully",
+	})
 }

@@ -63,3 +63,19 @@ func FetchItem(request Filter) ([]Item, error) {
 
 	return items, nil
 }
+
+func UpdateItem(itemID string, UpdateItem Item) error {
+	if err := DB.Model(&Item{}).Where("id = ?", itemID).Updates(UpdateItem).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func DeleteItem(itemID string) error {
+	if err := DB.Where("id = ?", itemID).Delete(&Item{}).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
