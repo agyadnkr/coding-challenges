@@ -30,3 +30,12 @@ func CreateWarehouse(newWarehouse Warehouse) error {
 
 	return nil
 }
+
+func GetAllWarehouses() ([]Warehouse, error) {
+	var warehouses []Warehouse
+	if err := DB.Find(&warehouses).Error; err != nil {
+		return nil, err
+	}
+
+	return warehouses, nil
+}

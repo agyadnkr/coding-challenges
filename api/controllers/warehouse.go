@@ -25,3 +25,12 @@ func CreateWarehouse(c echo.Context) error {
 		"message": "Warehouse created successfully",
 	})
 }
+
+func FetchAllWarehouses(c echo.Context) error {
+	warehouses, err := model.GetAllWarehouses()
+	if err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_fetching_warehouses")
+	}
+
+	return c.JSON(http.StatusOK, warehouses)
+}
