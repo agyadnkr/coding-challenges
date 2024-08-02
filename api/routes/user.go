@@ -16,7 +16,7 @@ func User(e *echo.Echo) {
 	apiGroup := e.Group("/api", middleware.CheckToken)
 
 	apiGroup.POST("/items", controllers.CreateItem)
-	apiGroup.GET("/items/:id", controllers.FecthAllItems)
+	apiGroup.GET("/items/:id", controllers.FetchAllItems)
 	apiGroup.PATCH("/items/:id", controllers.UpdateItem)
 	apiGroup.DELETE("/items/:id", controllers.DeleteItem)
 
@@ -25,7 +25,7 @@ func User(e *echo.Echo) {
 	apiGroup.PATCH("/warehouses/:id", controllers.UpdateWarehouse)
 	apiGroup.DELETE("/warehouses/:id", controllers.DeleteWarehouse)
 
-	// apiGroup.POST("/inventories", controllers.CreateInventory)
+	apiGroup.POST("/inventories", controllers.CreateInventory)
 	// apiGroup.GET("/inventories", controllers.FetchAllinventories)
 	// apiGroup.PATCH("/inventories/:id", controllers.UpdateInventory)
 	// apiGroup.DELETE("/inventories/:id", controllers.DeleteInventory)

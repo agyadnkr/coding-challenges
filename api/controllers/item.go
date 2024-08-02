@@ -3,34 +3,35 @@ package controller
 import (
 	"app/model"
 	"app/utility"
+	helpers "app/utility"
+	"errors"
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 )
 
 func CreateItem(c echo.Context) error {
-	var reqData []model.Item
+	var items []model.Item
 
-	if err := c.Bind(&reqData); err != nil {
-		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_bind_items")
+	if err := c.Bind(&items); err != nil {
+		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_bind_items")
 	}
 
-	for _, item := range reqData {
-		item.Itmid = uuid.New().String()
+	for _, item := range items {
+		if item.ItemName == "" || item.ItemPrice == 0 {
+			return helpers.ReturnLog(c, http.StatusBadRequest, "Error_empty_fields")
+		}
+
 		if err := model.CreateItem(item); err != nil {
-			return utility.ReturnLog(c, http.StatusInternalServerError, "item_with_the_same_name_already_exist")
+			return helpers.ReturnLog(c, http.StatusInternalServerError, "item_with_the_same_name_already_exist")
 		}
 	}
 
-	return c.JSON(http.StatusCreated, map[string]interface{}{
-		"message": "Items created successfully",
-	})
+	return c.JSON(http.StatusCreated, items)
 }
 
-func FecthAllItems(c echo.Context) error {
-
+func FetchAllItems(c echo.Context) error {
 	var searchRequest model.Filter
 
 	if err := c.Bind(&searchRequest); err != nil {
@@ -39,7 +40,7 @@ func FecthAllItems(c echo.Context) error {
 
 	item, err := model.FetchItem(searchRequest)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return utility.ReturnLog(c, http.StatusInternalServerError, "Error_record_not_found")
 		}
 		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_searching_products")

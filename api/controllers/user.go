@@ -4,7 +4,7 @@ import (
 	"app/middleware"
 	"app/model"
 	helpers "app/utility"
-	"fmt"
+	"errors"
 	"net/http"
 	"time"
 
@@ -13,11 +13,14 @@ import (
 )
 
 func Signup(c echo.Context) error {
-
 	var user model.User
 
 	if err := c.Bind(&user); err != nil {
 		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_bind_user")
+	}
+
+	if user.UserName == "" || user.Email == "" || user.Password == "" {
+		return helpers.ReturnLog(c, http.StatusBadRequest, "Error_empty_fields")
 	}
 
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
@@ -28,19 +31,20 @@ func Signup(c echo.Context) error {
 	user.Password = string(hashedPass)
 
 	if err := model.CreateUser(user); err != nil {
+		if errors.Is(err, model.ErrDuplicateData) {
+			return helpers.ReturnLog(c, http.StatusConflict, "duplicated_data")
+		}
 		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_create_user")
 	}
 
 	token, err := middleware.GenerateJWT(user, 24)
 	if err != nil {
-		fmt.Println(err, "<<<<<")
 		return err
 	}
 
 	return c.JSON(http.StatusAccepted, map[string]any{
 		"Token": token,
 	})
-
 }
 
 func Login(c echo.Context) error {

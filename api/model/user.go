@@ -23,18 +23,21 @@ type Env struct {
 	AccessTokenSecret string `mapstructure:"ACCESS_TOKEN_SECRET"`
 }
 
-func CreateUser(newAuthor User) error {
+var ErrDuplicateData = errors.New("duplicate_data")
 
+func CreateUser(newUser User) error {
 	db := DB
 
 	var existingUser User
-	if err := db.Table("users").Where("username=?", newAuthor.UserName).First(&existingUser).Error; err == nil {
-		return errors.New("Author_with_the_same_name_is_already_exists")
+	if err := db.Table("users").Where("username = ? OR email = ?", newUser.UserName, newUser.Email).First(&existingUser).Error; err == nil {
+		return ErrDuplicateData
+	} else if !errors.Is(err, gorm.ErrRecordNotFound) {
+		return err
 	}
 
-	newAuthor.Uid = uuid.New().String()
+	newUser.Uid = uuid.New().String()
 
-	if err := db.Create(&newAuthor).Error; err != nil {
+	if err := db.Create(&newUser).Error; err != nil {
 		return err
 	}
 
