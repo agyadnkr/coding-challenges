@@ -40,3 +40,11 @@ func GetAllInventories() ([]Inventory, error) {
 
 	return inventories, nil
 }
+
+func UpdateInventory(inventoryID string, updatedInventory Inventory) error {
+	if err := DB.Model(&Inventory{}).Where("id = ?", inventoryID).Updates(updatedInventory).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

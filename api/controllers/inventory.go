@@ -35,3 +35,21 @@ func FetchAllInventories(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, inventories)
 }
+
+func UpdateInventory(c echo.Context) error {
+	inventoryID := c.Param("id")
+
+	var updatedInventory model.Inventory
+	if err := c.Bind(&updatedInventory); err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_bind_inventory")
+	}
+
+	if err := model.UpdateInventory(inventoryID, updatedInventory); err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_updating_inventory")
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Inventory updated successfully",
+		"data":    updatedInventory,
+	})
+}
