@@ -31,3 +31,12 @@ func CreateInventory(newInventory Inventory) error {
 
 	return nil
 }
+
+func GetAllInventories() ([]Inventory, error) {
+	var inventories []Inventory
+	if err := DB.Where("deleted_at IS NULL").Find(&inventories).Error; err != nil {
+		return nil, err
+	}
+
+	return inventories, nil
+}

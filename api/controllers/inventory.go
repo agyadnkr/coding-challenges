@@ -2,6 +2,7 @@ package controller
 
 import (
 	"app/model"
+	"app/utility"
 	helpers "app/utility"
 	"net/http"
 
@@ -24,4 +25,13 @@ func CreateInventory(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, inventory)
+}
+
+func FetchAllInventories(c echo.Context) error {
+	inventories, err := model.GetAllInventories()
+	if err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_fetching_inventories")
+	}
+
+	return c.JSON(http.StatusOK, inventories)
 }
