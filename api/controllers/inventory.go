@@ -53,3 +53,15 @@ func UpdateInventory(c echo.Context) error {
 		"data":    updatedInventory,
 	})
 }
+
+func DeleteInventory(c echo.Context) error {
+	inventoryID := c.Param("id")
+
+	if err := model.DeleteInventory(inventoryID); err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_deleting_inventory")
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Inventory deleted successfully",
+	})
+}

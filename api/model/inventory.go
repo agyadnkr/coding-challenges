@@ -48,3 +48,11 @@ func UpdateInventory(inventoryID string, updatedInventory Inventory) error {
 
 	return nil
 }
+
+func DeleteInventory(inventoryID string) error {
+	if err := DB.Model(&Inventory{}).Where("id = ?", inventoryID).Update("deleted_at", time.Now()).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
