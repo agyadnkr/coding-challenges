@@ -17,7 +17,16 @@ type Inventory struct {
 	Quantity  int            `gorm:"column:quantity" json:"quantity"`
 }
 
-func CreateInventory(newInventory Inventory) error {
+type StockMoveRequest struct {
+	OriginWid      string `json:"origin_warehouse_id"`
+	DestinationWid string `json:"destination_warehouse_id"`
+	Items          []struct {
+		Itmid    string `json:"item_id"`
+		Quantity int    `json:"quantity"`
+	} `json:"items"`
+}
+
+func CreateInventory(newInventory *Inventory) error {
 	db := DB
 
 	var existingInventory Inventory
@@ -53,6 +62,11 @@ func DeleteInventory(inventoryID string) error {
 	if err := DB.Model(&Inventory{}).Where("id = ?", inventoryID).Update("deleted_at", time.Now()).Error; err != nil {
 		return err
 	}
+
+	return nil
+}
+
+func MoveStock(stockMoveRequest StockMoveRequest) error {
 
 	return nil
 }

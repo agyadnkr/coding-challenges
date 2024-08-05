@@ -19,24 +19,20 @@ type Item struct {
 	ItemDescription string         `gorm:"column:description" json:"description"`
 }
 
-func CreateItem(newItem Item) error {
-
+func CreateItem(newItem *Item) error {
 	db := DB
 
 	var existingItem Item
-
-	if err := db.Table("items").Where("name=?", newItem.ItemName).First(&existingItem).Error; err == nil {
-		return errors.New("Item_with_the_same_name_already_exists")
+	if err := db.Table("items").Where("name = ?", newItem.ItemName).First(&existingItem).Error; err == nil {
+		return errors.New("item_with_the_same_name_already_exists")
 	}
 
-	if err := db.Create(&newItem).Error; err != nil {
+	newItem.Itmid = uuid.New().String()
+	if err := db.Create(newItem).Error; err != nil {
 		return err
 	}
 
-	existingItem.Itmid = uuid.New().String()
-
 	return nil
-
 }
 
 func FetchItem(request Filter) ([]Item, error) {

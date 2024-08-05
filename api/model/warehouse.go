@@ -16,15 +16,15 @@ type Warehouse struct {
 	WarehouseAddress string         `gorm:"column:address" json:"address"`
 }
 
-func CreateWarehouse(newWarehouse Warehouse) error {
+func CreateWarehouse(newWarehouse *Warehouse) error {
 	db := DB
 
 	var existingWarehouse Warehouse
 	if err := db.Table("warehouses").Where("name = ?", newWarehouse.WarehouseName).First(&existingWarehouse).Error; err == nil {
-		return errors.New("Warehouse_with_the_same_name_already_exists")
+		return errors.New("warehouse_with_the_same_name_already_exist")
 	}
 
-	if err := db.Create(&newWarehouse).Error; err != nil {
+	if err := db.Create(newWarehouse).Error; err != nil {
 		return err
 	}
 

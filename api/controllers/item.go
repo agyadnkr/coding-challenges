@@ -18,14 +18,16 @@ func CreateItem(c echo.Context) error {
 		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_bind_items")
 	}
 
-	for _, item := range items {
+	for i, item := range items {
 		if item.ItemName == "" || item.ItemPrice == 0 {
 			return helpers.ReturnLog(c, http.StatusBadRequest, "Error_empty_fields")
 		}
 
-		if err := model.CreateItem(item); err != nil {
+		if err := model.CreateItem(&item); err != nil {
 			return helpers.ReturnLog(c, http.StatusInternalServerError, "item_with_the_same_name_already_exist")
 		}
+
+		items[i] = item
 	}
 
 	return c.JSON(http.StatusCreated, items)
@@ -72,6 +74,6 @@ func DeleteItem(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "Warehouse deleted successfully",
+		"message": "item deleted successfully",
 	})
 }

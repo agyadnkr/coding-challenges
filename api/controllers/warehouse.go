@@ -17,12 +17,14 @@ func CreateWarehouse(c echo.Context) error {
 	}
 
 	warehouse.Wid = uuid.New().String()
-	if err := model.CreateWarehouse(warehouse); err != nil {
+	if err := model.CreateWarehouse(&warehouse); err != nil {
 		return utility.ReturnLog(c, http.StatusInternalServerError, "warehouse_with_the_same_name_already_exist")
 	}
 
 	return c.JSON(http.StatusCreated, map[string]interface{}{
-		"message": "Warehouse created successfully",
+		"message":    "Warehouse created successfully",
+		"id":         warehouse.Wid,
+		"created_at": warehouse.CreatedAt,
 	})
 }
 

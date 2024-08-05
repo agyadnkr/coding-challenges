@@ -20,11 +20,14 @@ func CreateInventory(c echo.Context) error {
 		return helpers.ReturnLog(c, http.StatusBadRequest, "Error_empty_fields")
 	}
 
-	if err := model.CreateInventory(inventory); err != nil {
+	if err := model.CreateInventory(&inventory); err != nil {
 		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_create_inventory")
 	}
 
-	return c.JSON(http.StatusCreated, inventory)
+	return c.JSON(http.StatusCreated, map[string]interface{}{
+		"id":         inventory.Invid,
+		"created_at": inventory.CreatedAt,
+	})
 }
 
 func FetchAllInventories(c echo.Context) error {
@@ -63,5 +66,22 @@ func DeleteInventory(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Inventory deleted successfully",
+	})
+}
+
+func MoveStockInventory(c echo.Context) error {
+
+	var stockMoveRequest model.StockMoveRequest
+
+	if err := c.Bind(&stockMoveRequest); err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_bind_stock_move")
+	}
+
+	if err := model.MoveStock(stockMoveRequest); err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_moving_stock")
+	}
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Stock moved successfully",
 	})
 }
