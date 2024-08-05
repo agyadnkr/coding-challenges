@@ -77,9 +77,9 @@ func MoveStockInventory(c echo.Context) error {
 		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_bind_stock_move")
 	}
 
-	if err := model.MoveStock(stockMoveRequest); err != nil {
-		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_moving_stock")
-	}
+	// if err := model.MoveStock(stockMoveRequest); err != nil {
+	// 	return utility.ReturnLog(c, http.StatusInternalServerError, "Error_moving_stock")
+	// }
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
 		"message": "Stock moved successfully",

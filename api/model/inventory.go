@@ -66,7 +66,7 @@ func DeleteInventory(inventoryID string) error {
 	return nil
 }
 
-func MoveStock(stockMoveRequest StockMoveRequest) error {
+func MoveStock() error {
 
 	return nil
 }

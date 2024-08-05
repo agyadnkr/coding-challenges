@@ -18,7 +18,8 @@ func CreateItem(c echo.Context) error {
 		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_bind_items")
 	}
 
-	for i, item := range items {
+	var createdItems []map[string]interface{}
+	for _, item := range items {
 		if item.ItemName == "" || item.ItemPrice == 0 {
 			return helpers.ReturnLog(c, http.StatusBadRequest, "Error_empty_fields")
 		}
@@ -27,10 +28,13 @@ func CreateItem(c echo.Context) error {
 			return helpers.ReturnLog(c, http.StatusInternalServerError, "item_with_the_same_name_already_exist")
 		}
 
-		items[i] = item
+		createdItems = append(createdItems, map[string]interface{}{
+			"id":         item.Itmid,
+			"created_at": item.CreatedAt,
+		})
 	}
 
-	return c.JSON(http.StatusCreated, items)
+	return c.JSON(http.StatusCreated, createdItems)
 }
 
 func FetchAllItems(c echo.Context) error {
@@ -40,7 +44,7 @@ func FetchAllItems(c echo.Context) error {
 		return utility.ReturnLog(c, http.StatusBadRequest, "Invalid_request_body")
 	}
 
-	item, err := model.FetchItem(searchRequest)
+	items, err := model.FetchItem(searchRequest)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return utility.ReturnLog(c, http.StatusInternalServerError, "Error_record_not_found")
@@ -48,7 +52,15 @@ func FetchAllItems(c echo.Context) error {
 		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_searching_products")
 	}
 
-	return utility.ReturnLog(c, http.StatusOK, item)
+	filteredItems := make([]map[string]interface{}, len(items))
+	for i, item := range items {
+		filteredItems[i] = map[string]interface{}{
+			"id":         item.Itmid,
+			"created_at": item.CreatedAt,
+		}
+	}
+
+	return utility.ReturnLog(c, http.StatusOK, filteredItems)
 }
 
 func UpdateItem(c echo.Context) error {
@@ -63,7 +75,10 @@ func UpdateItem(c echo.Context) error {
 		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_updating_warehouse")
 	}
 
-	return utility.ReturnLog(c, http.StatusOK, "Item_updated_successfully")
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"id":         id,
+		"updated_at": itemData.UpdatedAt,
+	})
 }
 
 func DeleteItem(c echo.Context) error {
