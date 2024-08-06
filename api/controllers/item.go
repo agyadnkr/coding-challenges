@@ -6,6 +6,7 @@ import (
 	helpers "app/utility"
 	"errors"
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
@@ -30,6 +31,8 @@ func CreateItem(c echo.Context) error {
 
 		createdItems = append(createdItems, map[string]interface{}{
 			"id":         item.Itmid,
+			"item_name":  item.ItemName,
+			"Price":      item.ItemPrice,
 			"created_at": item.CreatedAt,
 		})
 	}
@@ -55,8 +58,11 @@ func FetchAllItems(c echo.Context) error {
 	filteredItems := make([]map[string]interface{}, len(items))
 	for i, item := range items {
 		filteredItems[i] = map[string]interface{}{
-			"id":         item.Itmid,
-			"created_at": item.CreatedAt,
+			"id":           item.Itmid,
+			"item_name":    item.ItemName,
+			"price":        item.ItemPrice,
+			"created_at":   item.CreatedAt,
+			"last_updated": item.UpdatedAt,
 		}
 	}
 
@@ -64,20 +70,23 @@ func FetchAllItems(c echo.Context) error {
 }
 
 func UpdateItem(c echo.Context) error {
-	id := c.Param("id")
-	var itemData model.Item
+	itemID := c.Param("id")
 
-	if err := c.Bind(&itemData); err != nil {
-		return utility.ReturnLog(c, http.StatusBadRequest, "Invalid_request_body")
+	var updatedItem model.Item
+	if err := c.Bind(&updatedItem); err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_bind_item")
 	}
 
-	if err := model.UpdateItem(id, itemData); err != nil {
-		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_updating_warehouse")
+	updatedItem.UpdatedAt = time.Now()
+
+	if err := model.UpdateItem(itemID, updatedItem); err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_updating_item")
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{
-		"id":         id,
-		"updated_at": itemData.UpdatedAt,
+		"id":         itemID,
+		"Response":   "Ok",
+		"updated_at": updatedItem.UpdatedAt,
 	})
 }
 

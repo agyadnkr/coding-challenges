@@ -60,8 +60,13 @@ func FetchItem(request Filter) ([]Item, error) {
 	return items, nil
 }
 
-func UpdateItem(itemID string, UpdateItem Item) error {
-	if err := DB.Model(&Item{}).Where("id = ?", itemID).Updates(UpdateItem).Error; err != nil {
+func UpdateItem(itemID string, updatedItem Item) error {
+	if err := DB.Model(&Item{}).Where("id = ?", itemID).Updates(map[string]interface{}{
+		"name":        updatedItem.ItemName,
+		"price":       updatedItem.ItemPrice,
+		"description": updatedItem.ItemDescription,
+		"updated_at":  updatedItem.UpdatedAt,
+	}).Error; err != nil {
 		return err
 	}
 
