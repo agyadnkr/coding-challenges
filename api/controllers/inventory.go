@@ -4,9 +4,11 @@ import (
 	"app/model"
 	"app/utility"
 	helpers "app/utility"
+	"errors"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 func CreateInventory(c echo.Context) error {
@@ -20,8 +22,11 @@ func CreateInventory(c echo.Context) error {
 		return helpers.ReturnLog(c, http.StatusBadRequest, "Error_empty_fields")
 	}
 
-	if err := model.CreateInventory(&inventory); err != nil {
-		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_create_inventory")
+	if err := model.CreateInventory(inventory); err != nil {
+		if errors.Is(err, model.ErrDuplicateData) {
+			return helpers.ReturnLog(c, http.StatusConflict, "duplicated_data")
+		}
+		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_create_user")
 	}
 
 	return c.JSON(http.StatusCreated, map[string]interface{}{
@@ -31,12 +36,32 @@ func CreateInventory(c echo.Context) error {
 }
 
 func FetchAllInventories(c echo.Context) error {
-	inventories, err := model.GetAllInventories()
-	if err != nil {
-		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_fetching_inventories")
+	var searchRequest model.Filter
+
+	if err := c.Bind(&searchRequest); err != nil {
+		return utility.ReturnLog(c, http.StatusBadRequest, "Invalid_request_body")
 	}
 
-	return c.JSON(http.StatusOK, inventories)
+	inventory, err := model.GetAllInventories(searchRequest)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return utility.ReturnLog(c, http.StatusInternalServerError, "Error_record_not_found")
+		}
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_searching_products")
+	}
+
+	filteredInventory := make([]map[string]interface{}, len(inventory))
+	for i, inventory := range inventory {
+		filteredInventory[i] = map[string]interface{}{
+			"id":           inventory.Invid,
+			"warehouse_id": inventory.Wid,
+			"item_id":      inventory.Itmid,
+			"created_at":   inventory.CreatedAt,
+			"last_updated": inventory.UpdatedAt,
+		}
+	}
+
+	return utility.ReturnLog(c, http.StatusOK, filteredInventory)
 }
 
 func UpdateInventory(c echo.Context) error {
@@ -69,19 +94,19 @@ func DeleteInventory(c echo.Context) error {
 	})
 }
 
-func MoveStockInventory(c echo.Context) error {
+// func MoveStockInventory(c echo.Context) error {
 
-	var stockMoveRequest model.StockMoveRequest
+// 	var stockMoveRequest model.StockMoveRequest
 
-	if err := c.Bind(&stockMoveRequest); err != nil {
-		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_bind_stock_move")
-	}
+// 	if err := c.Bind(&stockMoveRequest); err != nil {
+// 		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_bind_stock_move")
+// 	}
 
-	// if err := model.MoveStock(stockMoveRequest); err != nil {
-	// 	return utility.ReturnLog(c, http.StatusInternalServerError, "Error_moving_stock")
-	// }
+// 	// if err := model.MoveStock(stockMoveRequest); err != nil {
+// 	// 	return utility.ReturnLog(c, http.StatusInternalServerError, "Error_moving_stock")
+// 	// }
 
-	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "Stock moved successfully",
-	})
-}
+// 	return c.JSON(http.StatusOK, map[string]interface{}{
+// 		"message": "Stock moved successfully",
+// 	})
+// }

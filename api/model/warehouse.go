@@ -2,6 +2,7 @@ package model
 
 import (
 	"errors"
+	"strings"
 	"time"
 
 	"gorm.io/gorm"
@@ -31,13 +32,21 @@ func CreateWarehouse(newWarehouse *Warehouse) error {
 	return nil
 }
 
-func GetAllWarehouses() ([]Warehouse, error) {
-	var warehouses []Warehouse
-	if err := DB.Find(&warehouses).Error; err != nil {
+func GetAllWarehouses(request Filter) ([]Warehouse, error) {
+	var warehouse []Warehouse
+	db := DB
+
+	queryBuilder := db.Table("warehouses").Where("deleted_at IS NULL")
+
+	if request.KeyWord != "" {
+		queryBuilder = queryBuilder.Where("name ILIKE ?", "%"+strings.TrimSpace(request.KeyWord)+"%")
+	}
+
+	if err := queryBuilder.Find(&warehouse).Error; err != nil {
 		return nil, err
 	}
 
-	return warehouses, nil
+	return warehouse, nil
 }
 
 func UpdateWarehouse(warehouseID string, updatedWarehouse Warehouse) error {

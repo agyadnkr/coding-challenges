@@ -23,8 +23,6 @@ type Env struct {
 	AccessTokenSecret string `mapstructure:"ACCESS_TOKEN_SECRET"`
 }
 
-var ErrDuplicateData = errors.New("duplicate_data")
-
 func CreateUser(newUser User) error {
 	db := DB
 

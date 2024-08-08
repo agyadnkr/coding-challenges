@@ -1,11 +1,15 @@
 package model
 
 import (
+	"errors"
+
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
+
+var ErrDuplicateData = errors.New("duplicate_data")
 
 func InitDB() (*gorm.DB, error) {
 

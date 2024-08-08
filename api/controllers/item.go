@@ -94,7 +94,7 @@ func DeleteItem(c echo.Context) error {
 	itemID := c.Param("id")
 
 	if err := model.DeleteItem(itemID); err != nil {
-		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_deleting_warehouse")
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_deleting_item")
 	}
 
 	return c.JSON(http.StatusOK, map[string]interface{}{

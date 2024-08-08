@@ -3,10 +3,12 @@ package controller
 import (
 	"app/model"
 	"app/utility"
+	"errors"
 	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
+	"gorm.io/gorm"
 )
 
 func CreateWarehouse(c echo.Context) error {
@@ -29,12 +31,32 @@ func CreateWarehouse(c echo.Context) error {
 }
 
 func FetchAllWarehouses(c echo.Context) error {
-	warehouses, err := model.GetAllWarehouses()
-	if err != nil {
-		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_fetching_warehouses")
+	var searchRequest model.Filter
+
+	if err := c.Bind(&searchRequest); err != nil {
+		return utility.ReturnLog(c, http.StatusBadRequest, "Invalid_request_body")
 	}
 
-	return c.JSON(http.StatusOK, warehouses)
+	warehouse, err := model.GetAllWarehouses(searchRequest)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return utility.ReturnLog(c, http.StatusInternalServerError, "Error_record_not_found")
+		}
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_searching_warehouse")
+	}
+
+	filteredWarehouse := make([]map[string]interface{}, len(warehouse))
+	for i, warehouse := range warehouse {
+		filteredWarehouse[i] = map[string]interface{}{
+			"id":             warehouse.Wid,
+			"warehouse_name": warehouse.WarehouseName,
+			"address":        warehouse.WarehouseAddress,
+			"created_at":     warehouse.CreatedAt,
+			"last_updated":   warehouse.UpdatedAt,
+		}
+	}
+
+	return utility.ReturnLog(c, http.StatusOK, filteredWarehouse)
 }
 
 func UpdateWarehouse(c echo.Context) error {

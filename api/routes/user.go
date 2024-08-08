@@ -29,6 +29,6 @@ func User(e *echo.Echo) {
 	apiGroup.GET("/inventories", controllers.FetchAllInventories)
 	apiGroup.PATCH("/inventories/:id", controllers.UpdateInventory)
 	apiGroup.DELETE("/inventories/:id", controllers.DeleteInventory)
-	apiGroup.POST("/inventories/move-stock", controllers.MoveStockInventory)
+	// apiGroup.POST("/inventories/move-stock", controllers.MoveStockInventory)
 
 }
