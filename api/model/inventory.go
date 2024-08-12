@@ -4,6 +4,7 @@ import (
 	"errors"
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -17,33 +18,60 @@ type Inventory struct {
 	Quantity  int            `gorm:"column:quantity" json:"quantity"`
 }
 
-type StockMoveRequest struct {
-	OriginWid      string `json:"origin_warehouse_id"`
-	DestinationWid string `json:"destination_warehouse_id"`
-	Items          []struct {
-		Itmid    string `json:"item_id"`
-		Quantity int    `json:"quantity"`
-	} `json:"items"`
+var ErrDuplicatedData = errors.New("duplicated_data")
+
+type CreateInventoryRequest struct {
+	WarehouseID string          `json:"warehouse_id"`
+	Items       []InventoryItem `json:"items"`
 }
 
-func CreateInventory(newInventory *Inventory) error {
+type InventoryItem struct {
+	ItemID   string  `json:"item_id"`
+	Quantity float64 `json:"quantity"`
+}
+
+func CreateInventory(req CreateInventoryRequest) error {
+	tx := DB.Begin()
+
+	for _, item := range req.Items {
+		var existingInventory Inventory
+		if err := tx.Where("warehouse_id = ? AND item_id = ?", req.WarehouseID, item.ItemID).First(&existingInventory).Error; err == nil {
+			tx.Rollback()
+			return ErrDuplicatedData
+		}
+
+		newInventory := Inventory{
+			Invid:    uuid.New().String(),
+			Wid:      req.WarehouseID,
+			Itmid:    item.ItemID,
+			Quantity: int(item.Quantity),
+		}
+
+		if err := tx.Create(&newInventory).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	return tx.Commit().Error
+}
+
+func FetchInventories(request Filter) ([]Inventory, error) {
+	var inventories []Inventory
 	db := DB
 
-	var existingInventory Inventory
-	if err := db.Table("inventories").Where("item_id = ? AND warehouse_id = ?", newInventory.Itmid, newInventory.Wid).First(&existingInventory).Error; err == nil {
-		return errors.New("Inventory_for_this_item_and_warehouse_already_exists")
+	queryBuilder := db.Where("deleted_at IS NULL")
+
+	if request.Filter != nil {
+		if itemID, ok := request.Filter["item_id"]; ok && itemID != "" {
+			queryBuilder = queryBuilder.Where("item_id = ?", itemID)
+		}
+		if warehouseID, ok := request.Filter["warehouse_id"]; ok && warehouseID != "" {
+			queryBuilder = queryBuilder.Where("warehouse_id = ?", warehouseID)
+		}
 	}
 
-	if err := db.Create(&newInventory).Error; err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func GetAllInventories() ([]Inventory, error) {
-	var inventories []Inventory
-	if err := DB.Where("deleted_at IS NULL").Find(&inventories).Error; err != nil {
+	if err := queryBuilder.Find(&inventories).Error; err != nil {
 		return nil, err
 	}
 
@@ -54,19 +82,6 @@ func UpdateInventory(inventoryID string, updatedInventory Inventory) error {
 	if err := DB.Model(&Inventory{}).Where("id = ?", inventoryID).Updates(updatedInventory).Error; err != nil {
 		return err
 	}
-
-	return nil
-}
-
-func DeleteInventory(inventoryID string) error {
-	if err := DB.Model(&Inventory{}).Where("id = ?", inventoryID).Update("deleted_at", time.Now()).Error; err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func MoveStock() error {
 
 	return nil
 }
