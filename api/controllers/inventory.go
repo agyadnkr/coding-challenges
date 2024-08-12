@@ -67,14 +67,15 @@ func MoveStockInventory(c echo.Context) error {
 	var stockMoveRequest model.StockMoveRequest
 
 	if err := c.Bind(&stockMoveRequest); err != nil {
-		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_bind_stock_move")
+		return utility.ReturnLog(c, http.StatusBadRequest, "Invalid_request_body")
 	}
 
 	if err := model.MoveStock(stockMoveRequest); err != nil {
+		if errors.Is(err, model.ErrNotEnoughStock) {
+			return utility.ReturnLog(c, http.StatusConflict, "Not_enough_stock_in_origin_warehouse")
+		}
 		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_moving_stock")
 	}
 
-	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "Stock moved successfully",
-	})
+	return utility.ReturnLog(c, http.StatusOK, "Stock_moved_successfully")
 }
