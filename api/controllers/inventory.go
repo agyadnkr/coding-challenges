@@ -47,35 +47,34 @@ func FetchAllInventories(c echo.Context) error {
 
 func UpdateInventory(c echo.Context) error {
 	inventoryID := c.Param("id")
+	var reqData model.UpdateInventoryRequest
 
-	var updatedInventory model.Inventory
-	if err := c.Bind(&updatedInventory); err != nil {
-		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_bind_inventory")
+	if err := c.Bind(&reqData); err != nil {
+		return utility.ReturnLog(c, http.StatusBadRequest, "Invalid_request_body")
 	}
 
-	if err := model.UpdateInventory(inventoryID, updatedInventory); err != nil {
+	if err := model.UpdateInventory(inventoryID, reqData); err != nil {
+		if errors.Is(err, model.ErrItemNotFound) {
+			return utility.ReturnLog(c, http.StatusNotFound, "Item_not_found")
+		}
 		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_updating_inventory")
 	}
 
-	return c.JSON(http.StatusOK, map[string]interface{}{
-		"message": "Inventory updated successfully",
-		"data":    updatedInventory,
-	})
+	return utility.ReturnLog(c, http.StatusOK, "Inventory_updated")
 }
 
-// func MoveStockInventory(c echo.Context) error {
+func MoveStockInventory(c echo.Context) error {
+	var stockMoveRequest model.StockMoveRequest
 
-// 	var stockMoveRequest model.StockMoveRequest
+	if err := c.Bind(&stockMoveRequest); err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_bind_stock_move")
+	}
 
-// 	if err := c.Bind(&stockMoveRequest); err != nil {
-// 		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_bind_stock_move")
-// 	}
+	if err := model.MoveStock(stockMoveRequest); err != nil {
+		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_moving_stock")
+	}
 
-// 	// if err := model.MoveStock(stockMoveRequest); err != nil {
-// 	// 	return utility.ReturnLog(c, http.StatusInternalServerError, "Error_moving_stock")
-// 	// }
-
-// 	return c.JSON(http.StatusOK, map[string]interface{}{
-// 		"message": "Stock moved successfully",
-// 	})
-// }
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": "Stock moved successfully",
+	})
+}

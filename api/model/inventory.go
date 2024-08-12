@@ -30,6 +30,13 @@ type InventoryItem struct {
 	Quantity float64 `json:"quantity"`
 }
 
+var ErrItemNotFound = errors.New("item_not_found")
+
+type UpdateInventoryRequest struct {
+	WarehouseID string          `json:"warehouse_id"`
+	Items       []InventoryItem `json:"items"`
+}
+
 func CreateInventory(req CreateInventoryRequest) error {
 	tx := DB.Begin()
 
@@ -78,10 +85,22 @@ func FetchInventories(request Filter) ([]Inventory, error) {
 	return inventories, nil
 }
 
-func UpdateInventory(inventoryID string, updatedInventory Inventory) error {
-	if err := DB.Model(&Inventory{}).Where("id = ?", inventoryID).Updates(updatedInventory).Error; err != nil {
-		return err
+func UpdateInventory(inventoryID string, req UpdateInventoryRequest) error {
+	tx := DB.Begin()
+
+	for _, item := range req.Items {
+		var existingInventory Inventory
+		if err := tx.Where("warehouse_id = ? AND item_id = ?", req.WarehouseID, item.ItemID).First(&existingInventory).Error; err != nil {
+			tx.Rollback()
+			return ErrItemNotFound
+		}
+
+		newQuantity := float64(existingInventory.Quantity) + item.Quantity
+		if err := tx.Model(&Inventory{}).Where("id = ?", existingInventory.Invid).Update("quantity", newQuantity).Error; err != nil {
+			tx.Rollback()
+			return err
+		}
 	}
 
-	return nil
+	return tx.Commit().Error
 }
