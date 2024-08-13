@@ -13,28 +13,27 @@ import (
 )
 
 func CreateItem(c echo.Context) error {
-	// itemID := c.QueryParam("Itmid")
+	itemID := c.QueryParam("id")
 
-	// var items []model.Item
+	var items []model.Item
 
-	// if itemID == "" {
-	// 	return helpers.ReturnLog(c, http.StatusBadRequest, "Item_id_is_required")
-	// }
+	if itemID == "" {
+		return helpers.ReturnLog(c, http.StatusBadRequest, "Item_id_is_required")
+	}
 
-	// if err := c.Bind(&items); err != nil {
-	// 	return helpers.ReturnLog(c, http.StatusBadRequest, "Error_bind_items")
-	// }
+	if err := c.Bind(&items); err != nil {
+		return helpers.ReturnLog(c, http.StatusBadRequest, "Error_bind_items")
+	}
 
-	// item, err := model.CreateItem(itemID, items)
-	// if err != nil {
-	// 	if err == gorm.ErrRecordNotFound {
-	// 		return helpers.ReturnLog(c, http.StatusNotFound, "Item_not_found")
-	// 	}
-	// 	return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_retrieving_item")
-	// }
+	item, err := model.CreateItem(itemID, items)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return helpers.ReturnLog(c, http.StatusNotFound, "Item_not_found")
+		}
+		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_retrieving_item")
+	}
 
-	// return helpers.ReturnLog(c, item, http.StatusOK)
-	return nil
+	return helpers.ReturnLog(c, item, http.StatusOK)
 }
 
 func CreateMultipleItems(c echo.Context) error {
@@ -96,7 +95,7 @@ func FetchAllItems(c echo.Context) error {
 
 func FetchSingleItem(c echo.Context) error {
 
-	itemID := c.QueryParam("Itmid")
+	itemID := c.QueryParam("id")
 	if itemID == "" {
 		return helpers.ReturnLog(c, http.StatusBadRequest, "Item_id_is_required")
 	}
@@ -109,7 +108,7 @@ func FetchSingleItem(c echo.Context) error {
 		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_retrieving_item")
 	}
 
-	return helpers.ReturnLog(c, item, http.StatusOK)
+	return utility.ReturnLog(c, item, http.StatusOK)
 }
 
 func UpdateItem(c echo.Context) error {
