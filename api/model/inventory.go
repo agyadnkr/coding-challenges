@@ -15,7 +15,7 @@ type Inventory struct {
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at"`
 	Itmid     string         `gorm:"column:item_id" json:"item_id"`
 	Wid       string         `gorm:"column:warehouse_id" json:"warehouse_id"`
-	Quantity  int            `gorm:"column:quantity" json:"quantity"`
+	Quantity  float64        `gorm:"column:quantity" json:"quantity"`
 }
 
 type CreateInventoryRequest struct {
@@ -62,7 +62,7 @@ func CreateInventory(req CreateInventoryRequest) error {
 			Invid:    uuid.New().String(),
 			Wid:      req.WarehouseID,
 			Itmid:    item.ItemID,
-			Quantity: int(item.Quantity),
+			Quantity: item.Quantity,
 		}
 
 		if err := tx.Create(&newInventory).Error; err != nil {
@@ -130,7 +130,7 @@ func MoveStock(stockMoveRequest StockMoveRequest) error {
 			return err
 		}
 
-		if originInventory.Quantity < int(item.Quantity) {
+		if originInventory.Quantity < float64(item.Quantity) {
 			tx.Rollback()
 			return errors.New("not_enough_stock_in_origin_warehouse")
 		}
@@ -146,7 +146,7 @@ func MoveStock(stockMoveRequest StockMoveRequest) error {
 					Invid:    uuid.New().String(),
 					Itmid:    item.ItemID,
 					Wid:      stockMoveRequest.DestinationWid,
-					Quantity: int(item.Quantity),
+					Quantity: float64(item.Quantity),
 				}
 
 				if err := tx.Create(&newInventory).Error; err != nil {

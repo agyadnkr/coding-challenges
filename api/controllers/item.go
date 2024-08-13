@@ -13,6 +13,31 @@ import (
 )
 
 func CreateItem(c echo.Context) error {
+	// itemID := c.QueryParam("Itmid")
+
+	// var items []model.Item
+
+	// if itemID == "" {
+	// 	return helpers.ReturnLog(c, http.StatusBadRequest, "Item_id_is_required")
+	// }
+
+	// if err := c.Bind(&items); err != nil {
+	// 	return helpers.ReturnLog(c, http.StatusBadRequest, "Error_bind_items")
+	// }
+
+	// item, err := model.CreateItem(itemID, items)
+	// if err != nil {
+	// 	if err == gorm.ErrRecordNotFound {
+	// 		return helpers.ReturnLog(c, http.StatusNotFound, "Item_not_found")
+	// 	}
+	// 	return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_retrieving_item")
+	// }
+
+	// return helpers.ReturnLog(c, item, http.StatusOK)
+	return nil
+}
+
+func CreateMultipleItems(c echo.Context) error {
 	var items []model.Item
 
 	if err := c.Bind(&items); err != nil {
@@ -25,7 +50,7 @@ func CreateItem(c echo.Context) error {
 			return helpers.ReturnLog(c, http.StatusBadRequest, "Error_empty_fields")
 		}
 
-		if err := model.CreateItem(&item); err != nil {
+		if err := model.CreateItems(&item); err != nil {
 			return helpers.ReturnLog(c, http.StatusInternalServerError, "item_with_the_same_name_already_exist")
 		}
 
@@ -67,6 +92,24 @@ func FetchAllItems(c echo.Context) error {
 	}
 
 	return utility.ReturnLog(c, http.StatusOK, filteredItems)
+}
+
+func FetchSingleItem(c echo.Context) error {
+
+	itemID := c.QueryParam("Itmid")
+	if itemID == "" {
+		return helpers.ReturnLog(c, http.StatusBadRequest, "Item_id_is_required")
+	}
+
+	item, err := model.ViewItem(itemID)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return helpers.ReturnLog(c, http.StatusNotFound, "Item_not_found")
+		}
+		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_retrieving_item")
+	}
+
+	return helpers.ReturnLog(c, item, http.StatusOK)
 }
 
 func UpdateItem(c echo.Context) error {

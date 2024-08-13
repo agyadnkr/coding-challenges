@@ -15,11 +15,32 @@ type Item struct {
 	UpdatedAt       time.Time      `gorm:"column:updated_at;autoUpdateTime"`
 	DeletedAt       gorm.DeletedAt `gorm:"column:deleted_at"`
 	ItemName        string         `gorm:"column:name" json:"name"`
-	ItemPrice       int            `gorm:"column:price" json:"price"`
+	ItemPrice       float64        `gorm:"column:price" json:"price"`
 	ItemDescription string         `gorm:"column:description" json:"description"`
 }
 
-func CreateItem(newItem *Item) error {
+func CreateItem(itemID string, newItem *Item) error {
+	db := DB
+
+	var existingItem, item Item
+
+	if err := db.Table("items").First(&item, "id = ?", itemID).Error; err != nil {
+		return nil
+	}
+
+	if err := db.Table("items").Where("name = ?", newItem.ItemName).First(&existingItem).Error; err == nil {
+		return nil
+	}
+
+	newItem.Itmid = uuid.New().String()
+	if err := db.Create(newItem).Error; err != nil {
+		return nil
+	}
+
+	return nil
+}
+
+func CreateItems(newItem *Item) error {
 	db := DB
 
 	var existingItem Item
@@ -58,6 +79,17 @@ func FetchItem(request Filter) ([]Item, error) {
 	}
 
 	return items, nil
+}
+
+func ViewItem(itemID string) (*Item, error) {
+	db := DB
+
+	var item Item
+	if err := db.Table("items").First(&item, "id = ?", itemID).Error; err != nil {
+		return nil, err
+	}
+
+	return &item, nil
 }
 
 func UpdateItem(itemID string, updatedItem Item) error {

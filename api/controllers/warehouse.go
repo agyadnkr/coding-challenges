@@ -59,6 +59,11 @@ func FetchAllWarehouses(c echo.Context) error {
 	return utility.ReturnLog(c, http.StatusOK, filteredWarehouse)
 }
 
+func FetchSingleWarehouse(c echo.Context) error {
+
+	return nil
+}
+
 func UpdateWarehouse(c echo.Context) error {
 	warehouseID := c.Param("id")
 

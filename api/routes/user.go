@@ -16,12 +16,15 @@ func User(e *echo.Echo) {
 	apiGroup := e.Group("/api", middleware.CheckToken)
 
 	apiGroup.POST("/items", controllers.CreateItem)
-	apiGroup.GET("/items/:id", controllers.FetchAllItems)
+	apiGroup.POST("/items/bulk", controllers.CreateMultipleItems)
+	apiGroup.GET("/items", controllers.FetchAllItems)
+	apiGroup.GET("/items/:id", controllers.FetchSingleItem)
 	apiGroup.PATCH("/items/:id", controllers.UpdateItem)
 	apiGroup.DELETE("/items/:id", controllers.DeleteItem)
 
 	apiGroup.POST("/warehouses", controllers.CreateWarehouse)
 	apiGroup.GET("/warehouses", controllers.FetchAllWarehouses)
+	apiGroup.GET("/warehouses/:id", controllers.FetchSingleWarehouse)
 	apiGroup.PATCH("/warehouses/:id", controllers.UpdateWarehouse)
 	apiGroup.DELETE("/warehouses/:id", controllers.DeleteWarehouse)
 
