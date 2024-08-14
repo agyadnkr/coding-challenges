@@ -49,6 +49,14 @@ func GetAllWarehouses(request Filter) ([]Warehouse, error) {
 	return warehouse, nil
 }
 
+func FetchWarehouseByID(warehouseID string) (*Warehouse, error) {
+	var warehouse Warehouse
+	if err := DB.Where("id = ?", warehouseID).First(&warehouse).Error; err != nil {
+		return nil, err
+	}
+	return &warehouse, nil
+}
+
 func UpdateWarehouse(warehouseID string, updatedWarehouse Warehouse) error {
 	if err := DB.Model(&Warehouse{}).Where("id = ?", warehouseID).Updates(updatedWarehouse).Error; err != nil {
 		return err

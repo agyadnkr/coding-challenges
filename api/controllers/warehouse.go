@@ -3,6 +3,7 @@ package controller
 import (
 	"app/model"
 	"app/utility"
+	helpers "app/utility"
 	"errors"
 	"net/http"
 
@@ -60,8 +61,17 @@ func FetchAllWarehouses(c echo.Context) error {
 }
 
 func FetchSingleWarehouse(c echo.Context) error {
+	warehouseID := c.Param("id")
 
-	return nil
+	warehouse, err := model.FetchWarehouseByID(warehouseID)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return helpers.ReturnLog(c, http.StatusNotFound, "Warehouse_not_found")
+		}
+		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_fetching_warehouse")
+	}
+
+	return c.JSON(http.StatusOK, warehouse)
 }
 
 func UpdateWarehouse(c echo.Context) error {
