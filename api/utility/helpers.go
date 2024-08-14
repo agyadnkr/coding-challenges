@@ -4,7 +4,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func ReturnLog(c echo.Context, typelog int, data any, logmessage ...string) error {
+func ReturnLog(c echo.Context, errorCode int, data any, logmessage ...string) error {
 
 	var logs map[string]any
 	var response string
@@ -12,7 +12,7 @@ func ReturnLog(c echo.Context, typelog int, data any, logmessage ...string) erro
 	if len(logmessage) > 0 {
 		response = logmessage[0]
 	} else {
-		switch typelog {
+		switch errorCode {
 		case 200:
 			response = "OK"
 		case 201:
@@ -23,16 +23,18 @@ func ReturnLog(c echo.Context, typelog int, data any, logmessage ...string) erro
 			response = "BAD_REQUEST"
 		case 404:
 			response = "DATA_NOT_FOUND"
+		case 409:
+			response = "DUPLICATE_DATA"
 		case 500:
 			response = "INTERNAL_SERVER_ERROR"
 		}
 	}
 
 	logs = map[string]any{
-		"status_code": typelog,
+		"status_code": errorCode,
 		"Message":     response,
-		"data":        data,
+		"Data":        data,
 	}
 
-	return c.JSON(typelog, logs)
+	return c.JSON(errorCode, logs)
 }

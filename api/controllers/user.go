@@ -32,7 +32,7 @@ func Signup(c echo.Context) error {
 
 	if err := model.CreateUser(user); err != nil {
 		if errors.Is(err, model.ErrDuplicateData) {
-			return helpers.ReturnLog(c, http.StatusConflict, "duplicated_data")
+			return helpers.ReturnLog(c, 409, "duplicated_data")
 		}
 		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_create_user")
 	}

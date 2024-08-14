@@ -5,6 +5,7 @@ import (
 	"app/utility"
 	helpers "app/utility"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -13,27 +14,30 @@ import (
 )
 
 func CreateItem(c echo.Context) error {
-	itemID := c.QueryParam("id")
+	var item model.Item
 
-	var items []model.Item
-
-	if itemID == "" {
-		return helpers.ReturnLog(c, http.StatusBadRequest, "Item_id_is_required")
+	if err := c.Bind(&item); err != nil {
+		fmt.Println(err)
+		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_bind_items")
 	}
 
-	if err := c.Bind(&items); err != nil {
-		return helpers.ReturnLog(c, http.StatusBadRequest, "Error_bind_items")
+	var createdItem map[string]interface{}
+	if item.ItemName == "" {
+		return helpers.ReturnLog(c, http.StatusBadRequest, "Error_empty_fields")
 	}
 
-	item, err := model.CreateItem(itemID, items)
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return helpers.ReturnLog(c, http.StatusNotFound, "Item_not_found")
-		}
-		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_retrieving_item")
+	if err := model.CreateItem(&item); err != nil {
+		return helpers.ReturnLog(c, 409, "")
 	}
 
-	return helpers.ReturnLog(c, item, http.StatusOK)
+	createdItem = map[string]interface{}{
+		"id":         item.Itmid,
+		"item_name":  item.ItemName,
+		"Price":      item.ItemPrice,
+		"created_at": item.CreatedAt,
+	}
+
+	return c.JSON(http.StatusCreated, createdItem)
 }
 
 func CreateMultipleItems(c echo.Context) error {
@@ -43,14 +47,21 @@ func CreateMultipleItems(c echo.Context) error {
 		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_bind_items")
 	}
 
+	tx := model.DB.Begin()
+	if tx.Error != nil {
+		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_starting_transaction")
+	}
+
 	var createdItems []map[string]interface{}
 	for _, item := range items {
-		if item.ItemName == "" || item.ItemPrice == 0 {
+		if item.ItemName == "" {
+			tx.Rollback()
 			return helpers.ReturnLog(c, http.StatusBadRequest, "Error_empty_fields")
 		}
 
-		if err := model.CreateItems(&item); err != nil {
-			return helpers.ReturnLog(c, http.StatusInternalServerError, "item_with_the_same_name_already_exist")
+		if err := model.CreateItems(tx, &item); err != nil {
+			tx.Rollback()
+			return helpers.ReturnLog(c, http.StatusInternalServerError, err.Error())
 		}
 
 		createdItems = append(createdItems, map[string]interface{}{
@@ -59,6 +70,11 @@ func CreateMultipleItems(c echo.Context) error {
 			"Price":      item.ItemPrice,
 			"created_at": item.CreatedAt,
 		})
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
+		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_committing_transaction")
 	}
 
 	return c.JSON(http.StatusCreated, createdItems)
@@ -94,21 +110,17 @@ func FetchAllItems(c echo.Context) error {
 }
 
 func FetchSingleItem(c echo.Context) error {
+	itemID := c.Param("id")
 
-	itemID := c.QueryParam("id")
-	if itemID == "" {
-		return helpers.ReturnLog(c, http.StatusBadRequest, "Item_id_is_required")
-	}
-
-	item, err := model.ViewItem(itemID)
+	item, err := model.FetchItemByID(itemID)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return helpers.ReturnLog(c, http.StatusNotFound, "Item_not_found")
 		}
-		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_retrieving_item")
+		return helpers.ReturnLog(c, http.StatusInternalServerError, "Error_fetching_item")
 	}
 
-	return utility.ReturnLog(c, item, http.StatusOK)
+	return c.JSON(http.StatusOK, item)
 }
 
 func UpdateItem(c echo.Context) error {

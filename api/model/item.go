@@ -19,37 +19,31 @@ type Item struct {
 	ItemDescription string         `gorm:"column:description" json:"description"`
 }
 
-func CreateItem(itemID string, newItem *Item) error {
+func CreateItem(newItem *Item) error {
 	db := DB
-
-	var existingItem, item Item
-
-	if err := db.Table("items").First(&item, "id = ?", itemID).Error; err != nil {
-		return nil
-	}
+	var existingItem Item
 
 	if err := db.Table("items").Where("name = ?", newItem.ItemName).First(&existingItem).Error; err == nil {
-		return nil
+		return errors.New("")
 	}
 
 	newItem.Itmid = uuid.New().String()
 	if err := db.Create(newItem).Error; err != nil {
-		return nil
+		return err
 	}
 
 	return nil
 }
 
-func CreateItems(newItem *Item) error {
-	db := DB
-
+func CreateItems(tx *gorm.DB, newItem *Item) error {
 	var existingItem Item
-	if err := db.Table("items").Where("name = ?", newItem.ItemName).First(&existingItem).Error; err == nil {
+
+	if err := tx.Table("items").Where("name = ?", newItem.ItemName).First(&existingItem).Error; err == nil {
 		return errors.New("item_with_the_same_name_already_exists")
 	}
 
 	newItem.Itmid = uuid.New().String()
-	if err := db.Create(newItem).Error; err != nil {
+	if err := tx.Create(newItem).Error; err != nil {
 		return err
 	}
 
@@ -81,14 +75,11 @@ func FetchItem(request Filter) ([]Item, error) {
 	return items, nil
 }
 
-func ViewItem(itemID string) (*Item, error) {
-	db := DB
-
+func FetchItemByID(itemID string) (*Item, error) {
 	var item Item
-	if err := db.Table("items").First(&item, "id = ?", itemID).Error; err != nil {
+	if err := DB.Where("id = ?", itemID).First(&item).Error; err != nil {
 		return nil, err
 	}
-
 	return &item, nil
 }
 

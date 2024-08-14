@@ -19,7 +19,7 @@ func CreateInventory(c echo.Context) error {
 
 	if err := model.CreateInventory(reqData); err != nil {
 		if errors.Is(err, model.ErrDuplicatedData) {
-			return utility.ReturnLog(c, http.StatusConflict, "Duplicated_data")
+			return utility.ReturnLog(c, 409, "Duplicated_data")
 		}
 		return utility.ReturnLog(c, http.StatusInternalServerError, "Error_creating_inventory")
 	}
